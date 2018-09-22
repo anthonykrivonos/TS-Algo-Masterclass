@@ -1,0 +1,18 @@
+{
+      "name": "ts-algo-masterclass",
+      "version": "1.0.0",
+      "description": "Collection of algorithms and data structures in Typescript.",
+      "main": "index.js",
+      "scripts": {
+            "clean": "rimraf dist",
+            "start": "npm-run-all clean --parallel watch:build watch:server --print-label",
+            "watch:build": "tsc --watch",
+            "watch:server": "nodemon './dist/index.js' --watch './dist'"
+      },
+      "author": "Anthony Krivonos",
+      "license": "MIT",
+      "dependencies": {
+            "nodemon": "^1.18.4",
+            "typescript": "^3.0.3"
+      }
+}
