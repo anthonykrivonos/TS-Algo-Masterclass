@@ -1,2 +1,5 @@
-src/**/*.js
-src/**/*.map
+*.DS_Store
+/src/**/*.js
+/src/**/*.map
+node_modules/
+/.atomignore
