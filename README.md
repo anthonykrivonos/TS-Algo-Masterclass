@@ -6,7 +6,7 @@ This is a *work-in-progress* TypeScript algorithm and data structure masterclass
 
 TypeScript offers the power and performance of statically-typed, object oriented programming (OOP) languages alongside the vast multitude of available packages and libraries written in Vanilla JavaScript and distributed in Node.js. If you come from an OOP background, you'll see all the same stuff you know and love (or, aren't tired enough of just yet). If you've thrived as a developer in JavaScript or other scripting languages, perhaps it'll take you one step closer to becoming **#hackerman**.
 
-![Hackerman](https://media.giphy.com/media/QbumCX9HFFDQA/giphy.gif)
+![Hackerman](https://media.giphy.com/media/RyXVu4ZW454IM/giphy.gif)
 
 ## Getting Started
 
