@@ -29,7 +29,8 @@ export function analyze(func:Function, forObject:Object | null = null, ...withPa
       let startTime = new Date().getTime();
       let result = func.apply(forObject, withParameters);
       let endTime = new Date().getTime();
-      let duration = (endTime - startTime)/1000;
+      let duration = endTime - startTime;
+      let durationS = (endTime - startTime)/1000;
 
       let timeIndicator = duration < PERCEPTION_THRESHOLD ? (duration < PERCEPTION_THRESHOLD / 2 ? "✅" : "⚠️") : "🚨";
 
@@ -37,7 +38,7 @@ export function analyze(func:Function, forObject:Object | null = null, ...withPa
 ${timeIndicator} ${functionName} called${forObject != null ? ` on ❮ ${objectValue} ❯` : ""}
   ⮑ Returned: ${result}
   📣 Called ${withParameters.length > 0 ? `with args: ${withParameters.join(",")}` : "with no arguments"}
-  ⏳ Took ${duration}s`);
+  ⏳ Took ${durationS}s`);
 };
 
 //

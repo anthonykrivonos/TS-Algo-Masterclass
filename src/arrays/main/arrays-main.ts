@@ -335,10 +335,23 @@ export class MCArray<T> extends Array<T> {
        * Bogo Sort
        * - O((n + 1)!)
        * - Ridiculously slow sorting algorithm that generates permutations of the array until it finds a sorted permutation.
-       * - If all else fails, return the mergeSort of the MCArray, because we know that it's a little more sensible.
        * @return The sorted MCArray.
        */
       public bogoSort():MCArray<T> {
+            while (!this.isSorted()) {
+                  this.shuffle();
+            }
+            return this;
+      }
+
+      /**
+       * Bogo Sort - Fallback
+       * - O(n!)
+       * - Ridiculously slow sorting algorithm that generates permutations of the array until it finds a sorted permutation.
+       * - If all else fails, return the mergeSort of the MCArray, because we know that it's a little more sensible.
+       * @return The sorted MCArray.
+       */
+      public bogoSortFallback():MCArray<T> {
             let i = 0;
             let maximumTries = Utility.factorial(this.length);
             while (i < maximumTries && !this.isSorted()) {
