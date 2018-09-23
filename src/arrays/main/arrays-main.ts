@@ -5,6 +5,8 @@
  * Arrays/Main
  */
 
+import * as Utility from "../../utility";
+
 /**
  * Masterclass extension of the Array.
  */
@@ -41,6 +43,45 @@ export class MCArray<T> extends Array<T> {
       public copy():MCArray<T> {
             let mcArray:MCArray<any> = this.slice() as MCArray<T>;
             return mcArray;
+      }
+
+      /**
+       * isSorted
+       * - Checks to see if the MCArray is sorted.
+       * @returns True if sorted, else false.
+       */
+      public isSorted():boolean {
+            let i = 0;
+            while (i < this.length - 1) {
+                  if (this[i] > this[i + 1]) { return false; }
+                  i++;
+            }
+            return true;
+      }
+
+      /**
+       * Shuffled
+       * - Returns a shuffled version of the MCArray, without modifying it.
+       * @returns A shuffled MCArray.
+       */
+      public shuffled():MCArray<T> {
+            let arr = this.copy();
+            for (let i = arr.length - 1; i > 0; i--) {
+                  const j = Math.floor(Math.random() * (i + 1));
+                  [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+      }
+
+      /**
+       * Shuffled
+       * - Shuffles the MCArray.
+       */
+      public shuffle():void {
+            for (let i = this.length - 1; i > 0; i--) {
+                  const j = Math.floor(Math.random() * (i + 1));
+                  [this[i], this[j]] = [this[j], this[i]];
+            }
       }
 
       /**
@@ -290,6 +331,23 @@ export class MCArray<T> extends Array<T> {
             return this;
       }
 
+      /**
+       * Bogo Sort
+       * - O((n + 1)!)
+       * - Ridiculously slow sorting algorithm that generates permutations of the array until it finds a sorted permutation.
+       * - If all else fails, return the mergeSort of the MCArray, because we know that it's a little more sensible.
+       * @return The sorted MCArray.
+       */
+      public bogoSort():MCArray<T> {
+            let i = 0;
+            let maximumTries = Utility.factorial(this.length);
+            while (i < maximumTries && !this.isSorted()) {
+                  this.shuffle();
+                  i++;
+            }
+            return i < maximumTries ? this : this.mergeSort();
+      }
+
       //
       // Searching Algorithms
       //
@@ -435,5 +493,7 @@ export class MCArray<T> extends Array<T> {
 
             return -1;
       }
+
+
 
 }
