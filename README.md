@@ -1,4 +1,4 @@
-# TS-Algo-Masterclass
+# TypeScript Algorithm Masterclass
 
 This is a *work-in-progress* TypeScript algorithm and data structure masterclass that'll be constantly updated with important CS concepts and coding interview problems.
 
