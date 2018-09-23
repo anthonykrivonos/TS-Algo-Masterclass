@@ -15,17 +15,12 @@ export class MCArray<T> extends Array<T> {
       // Bucket sort recursive
       // Heapsort
       // Heapsort recursive
-      // Mergesort
 
-      // Linear Search
-      // Binary Search
-      // Jump Search
       // Interpolation Search
       // Exponential Search
       // Sublist Search (Search a linked list in another list)
       // Fibonacci Search
       // The Ubiquitous Binary Search
-      // Recursive program to linearly search an element in a given array
 
       /**
        * Create
@@ -59,6 +54,10 @@ export class MCArray<T> extends Array<T> {
             this[i] = this[j];
             this[j] = temp;
       }
+
+      //
+      // Sorting Algorithms
+      //
 
       /**
        * WARNING: Requires implementation.
@@ -143,12 +142,13 @@ export class MCArray<T> extends Array<T> {
        */
       public insertionSort():MCArray<T> {
             for (var i = 1; i < this.length; i++) {
+                  var key = this[i];
                   var j = i - 1;
-                  while (j >= 0 && this[j] > this[i]) {
+                  while (j >= 0 && this[j] > key) {
                         this[j + 1] = this[j];
                         j--;
                   }
-                  this[j + 1] = this[i];
+                  this[j + 1] = key;
             }
             return this;
       }
@@ -169,12 +169,13 @@ export class MCArray<T> extends Array<T> {
 
             this.insertionSortRecursive(sortLimit - 1);
 
+            var key = this[sortLimit];
             var i = sortLimit - 1;
-            while (i >= 0 && this[i] > this[sortLimit]) {
+            while (i >= 0 && this[i] > key) {
                   this[i + 1] = this[i];
                   i--;
             }
-            this[i + 1] = this[sortLimit];
+            this[i + 1] = key;
 
             return this;
       }
@@ -213,7 +214,7 @@ export class MCArray<T> extends Array<T> {
        */
       public selectionSortRecursive(sortStart:number | null = null):MCArray<T> {
 
-            sortStart = sortStart == null ? this.length : sortStart;
+            sortStart = sortStart == null ? 0 : sortStart;
             if (sortStart >= this.length) return this;
 
             var min = this[sortStart];
@@ -225,8 +226,11 @@ export class MCArray<T> extends Array<T> {
                         minIndex = i;
                   }
             }
-            this.swap(i, minIndex);
+
+            this.swap(sortStart, minIndex);
+
             return this.selectionSortRecursive(sortStart + 1);
+
       }
 
       /**
@@ -234,14 +238,13 @@ export class MCArray<T> extends Array<T> {
        * - O(nlog(n))
        * - Divides array in halves until each element is in a different array of length 1.
        * - Merge "halves" in sorted order.
-       * @param sortStart The lower limit for sorting. Default = null sorts the whole list.
        * @return The sorted MCArray.
        */
       public mergeSort():MCArray<T> {
 
             let mergeSortHelper = (left:number, right:number) => {
-                  if (left > right) {
-                        let middle = Math.floor((left + (right - 1))/2);
+                  if (left < right) {
+                        let middle = Math.floor((left + right - 1)/2);
                         mergeSortHelper(left, middle);
                         mergeSortHelper(middle + 1, right);
                         merge(left, middle, right);
@@ -252,10 +255,10 @@ export class MCArray<T> extends Array<T> {
                   let leftArr = [];
                   let rightArr = [];
 
-                  for (var i = left; i < middle - left + 1; i++) {
+                  for (var i = left; i < middle + 1; i++) {
                         leftArr.push(this[i]);
                   }
-                  for (var i = middle; i < right - middle + 1; i++) {
+                  for (var i = middle + 1; i < right + 1; i++) {
                         rightArr.push(this[i]);
                   }
 
@@ -273,20 +276,164 @@ export class MCArray<T> extends Array<T> {
 
                   while (i < leftArr.length) {
                         this[k] = leftArr[i];
-                        k++;
-                        i++;
+                        k++; i++;
                   }
 
                   while (j < rightArr.length) {
-                        this[k] = leftArr[j];
-                        k++;
-                        j++;
+                        this[k] = rightArr[j];
+                        k++; j++;
                   }
             };
 
             mergeSortHelper(0, this.length - 1);
 
             return this;
+      }
+
+      //
+      // Searching Algorithms
+      //
+
+      /**
+       * Linear Search
+       * - O(n)
+       * - Loops through entire array from start to finish and returns the index of the searched element or -1 otherwise.
+       * @return The index of the found element.
+       */
+      public linearSearch(element:T):number {
+            for (var i = 0; i < this.length; i++) {
+                  if (this[i] === element) { return i; }
+            }
+            return -1;
+      }
+
+      /**
+       * Linear Search - Recursive
+       * - O(n)
+       * - Loops through entire array from start to finish and returns the index of the searched element or -1 otherwise.
+       * - So unnecessary to do it recursively, but whatever floats your boat.
+       * @return The index of the found element.
+       */
+      public linearSearchRecursive(element:T, index:number | null = null):number {
+            index = index ? index : 0;
+
+            if (index < this.length) {
+                  if (this[index] === element) {
+                        return index;
+                  }
+                  return this.linearSearchRecursive(element, index + 1);
+            }
+
+            return -1;
+      }
+
+      /**
+       * Binary Search
+       * - O(log(n))
+       * - Check if the middle of a sorted array is the element.
+       *   - If so, return it's index.
+       *   - If it's less than the element, search the right half.
+       *   - If it's greater than the element, search the left half.
+       *   - Iterate until the half being searched is empty, then return false if element is not found.
+       * @return The index of the found element.
+       */
+      public binarySearch(element:T):number {
+            var left = 0;
+            var right = this.length - 1;
+            while (left < right) {
+                  var middle = Math.floor((left + right - 1)/2);
+                  if (this[middle] === element) {
+                        return middle;
+                  } else if (this[middle] < element) {
+                        left = middle + 1;
+                  } else {
+                        right = middle - 1;
+                  }
+            }
+            return -1;
+      }
+
+      /**
+       * Binary Search - Recursive
+       * - O(log(n))
+       * - Check if the middle of a sorted array is the element.
+       *   - If so, return it's index.
+       *   - If it's less than the element, search the right half.
+       *   - If it's greater than the element, search the left half.
+       *   - Iterate until the half being searched is empty, then return false if element is not found.
+       * @return The index of the found element.
+       */
+      public binarySearchRecursive(element:T, left:number | null = null, right:number | null = null):number {
+            left = left ? left : 0;
+            right = right ? right : this.length - 1;
+
+            if (left < right) {
+                  var middle = Math.floor((left + right - 1)/2);
+                  if (this[middle] === element) {
+                        return middle;
+                  } else if (this[middle] < element) {
+                        return this.binarySearchRecursive(element, middle + 1, right);
+                  } else {
+                        return this.binarySearchRecursive(element, left, middle - 1);
+                  }
+            }
+
+            return -1;
+      }
+
+      /**
+       * Jump Search
+       * - O(sqrt(n))
+       * - Linearly jump a sorted array by sqrt(n) steps until the first element is greater than the element being searched for.
+       * - Go backwards until the element is found.
+       * - If the element is not found, return -1.
+       * @return The index of the found element.
+       */
+      public jumpSearch(element:T):number {
+
+            var blockSize = Math.floor(Math.sqrt(this.length));
+
+            var i = 0;
+            while (i < this.length && this[i] < element) {
+                  i += blockSize;
+                  if (i >= this.length) { i = this.length - 1; }
+            }
+
+            let minIndexToCheck = i - blockSize;
+            while (i >= minIndexToCheck) {
+                  if (this[i] === element) { return i; }
+                  i--;
+            }
+
+            return -1;
+      }
+
+      /**
+       * Jump Search - Recursive
+       * - O(sqrt(n))
+       * - Linearly jump a sorted array by sqrt(n) steps until the first element is greater than the element being searched for.
+       * - Go backwards until the element is found.
+       * - If the element is not found, return -1.
+       * @return The index of the found element.
+       */
+      public jumpSearchRecursive(element:T, i:number | null = null, blockSize:number | null = null):number {
+
+            i = i ? i : 0;
+            blockSize = blockSize ? blockSize : Math.floor(Math.sqrt(this.length));
+
+            if (i + blockSize < this.length && this[i] < element) {
+                  return this.jumpSearchRecursive(element, i + blockSize, blockSize);
+            }
+
+            i = this.length - 1;
+
+            let minIndexToCheck = i - blockSize;
+            while (i >= minIndexToCheck) {
+                  if (this[i] === element) { return i; }
+                  i--;
+            }
+
+            return -1;
       }
 
 }

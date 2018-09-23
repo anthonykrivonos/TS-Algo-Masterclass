@@ -14,20 +14,35 @@ console.log(`Testing Sorting Functions on ${arrToSort}`);
 
 // Test Bubble Sort
 console.log("Bubble Sort");
-console.log(arrToSort.bubbleSort());
-console.log(arrToSort.bubbleSortOptimized());
-console.log(arrToSort.bubbleSortRecursive());
+console.log(arrToSort.copy().bubbleSort());
+console.log(arrToSort.copy().bubbleSortOptimized());
+console.log(arrToSort.copy().bubbleSortRecursive());
 
 // Test Insertion Sort
 console.log("Insertion Sort");
-console.log(arrToSort.insertionSort());
-console.log(arrToSort.insertionSortRecursive());
+console.log(arrToSort.copy().insertionSort());
+console.log(arrToSort.copy().insertionSortRecursive());
 
 // Test Selection Sort
 console.log("Selection Sort");
-console.log(arrToSort.selectionSort());
-console.log(arrToSort.selectionSortRecursive());
+console.log(arrToSort.copy().selectionSort());
+console.log(arrToSort.copy().selectionSortRecursive());
 
 // Test Merge Sort
 console.log("Merge Sort");
-console.log(arrToSort.mergeSort());
+console.log(arrToSort.copy().mergeSort());
+
+// Test Linear Search for 3
+console.log("Linear Searching for 3");
+console.log(arrToSort.copy().linearSearch(3));
+console.log(arrToSort.copy().linearSearchRecursive(3));
+
+// Test Binary Search for 6
+console.log("Binary Searching Sorted Array for 6");
+console.log(arrToSort.copy().mergeSort().binarySearch(6));
+console.log(arrToSort.copy().mergeSort().binarySearchRecursive(6));
+
+// Test Jump Search for 7
+console.log("Binary Searching Sorted Array for 7");
+console.log(arrToSort.copy().mergeSort().jumpSearch(7));
+console.log(arrToSort.copy().mergeSort().jumpSearchRecursive(7));
