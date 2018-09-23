@@ -27,3 +27,7 @@ console.log(arrToSort.insertionSortRecursive());
 console.log("Selection Sort");
 console.log(arrToSort.selectionSort());
 console.log(arrToSort.selectionSortRecursive());
+
+// Test Merge Sort
+console.log("Merge Sort");
+console.log(arrToSort.mergeSort());

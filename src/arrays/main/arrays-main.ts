@@ -238,6 +238,54 @@ export class MCArray<T> extends Array<T> {
        * @return The sorted MCArray.
        */
       public mergeSort():MCArray<T> {
+
+            let mergeSortHelper = (left:number, right:number) => {
+                  if (left > right) {
+                        let middle = Math.floor((left + (right - 1))/2);
+                        mergeSortHelper(left, middle);
+                        mergeSortHelper(middle + 1, right);
+                        merge(left, middle, right);
+                  }
+            };
+
+            let merge = (left:number, middle:number, right:number) => {
+                  let leftArr = [];
+                  let rightArr = [];
+
+                  for (var i = left; i < middle - left + 1; i++) {
+                        leftArr.push(this[i]);
+                  }
+                  for (var i = middle; i < right - middle + 1; i++) {
+                        rightArr.push(this[i]);
+                  }
+
+                  var i = 0, j = 0, k = left;
+                  while (i < leftArr.length && j < rightArr.length) {
+                        if (leftArr[i] < rightArr[j]) {
+                              this[k] = leftArr[i];
+                              i++;
+                        } else {
+                              this[k] = rightArr[j];
+                              j++;
+                        }
+                        k++;
+                  }
+
+                  while (i < leftArr.length) {
+                        this[k] = leftArr[i];
+                        k++;
+                        i++;
+                  }
+
+                  while (j < rightArr.length) {
+                        this[k] = leftArr[j];
+                        k++;
+                        j++;
+                  }
+            };
+
+            mergeSortHelper(0, this.length - 1);
+
             return this;
       }
 
