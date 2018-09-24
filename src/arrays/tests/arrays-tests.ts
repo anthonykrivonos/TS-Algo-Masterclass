@@ -11,7 +11,7 @@ import { MCArray } from '../main/arrays-main';
 let arrToSort = new MCArray(1, 3, 6, 2, 4, 8, 5, 9, 7);
 
 // Call Tests
-console.log(`Calling MCArray Tests`);
+console.log(`🔎 Calling MCArray Tests`);
 
 // Test Bubble Sort
 Utility.analyze(MCArray.prototype.bubbleSort, arrToSort.copy());
@@ -39,8 +39,15 @@ Utility.analyze(MCArray.prototype.linearSearchRecursive, arrToSort.copy(), 3);
 
 // Test Binary Search for 6
 Utility.analyze(MCArray.prototype.mergeSort().binarySearch, arrToSort.copy().mergeSort(), 6);
+Utility.analyze(MCArray.prototype.mergeSort().binarySearchOptimized, arrToSort.copy().mergeSort(), 6);
 Utility.analyze(MCArray.prototype.mergeSort().binarySearchRecursive, arrToSort.copy().mergeSort(), 6);
 
 // Test Jump Search for 7
 Utility.analyze(MCArray.prototype.jumpSearch, arrToSort.copy().mergeSort(), 7);
 Utility.analyze(MCArray.prototype.jumpSearchRecursive, arrToSort.copy().mergeSort(), 7);
+
+// Test Exponential Search for 8
+Utility.analyze(MCArray.prototype.exponentialSearch, arrToSort.copy().mergeSort(), 8);
+
+// Test Fibonacci Search for 4
+Utility.analyze(MCArray.prototype.fibonacciSearch, arrToSort.copy().mergeSort(), 4);

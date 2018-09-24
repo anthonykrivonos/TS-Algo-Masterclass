@@ -19,9 +19,6 @@ export class MCArray<T> extends Array<T> {
       // Heapsort recursive
 
       // Interpolation Search
-      // Exponential Search
-      // Sublist Search (Search a linked list in another list)
-      // Fibonacci Search
       // The Ubiquitous Binary Search
 
       /**
@@ -425,6 +422,29 @@ export class MCArray<T> extends Array<T> {
       }
 
       /**
+       * Binary Search - Optimized
+       * - O(log(n))
+       * - Check if the middle of a sorted array is the element.
+       *   - If so, return it's index.
+       *   - If it's less than the element, change the right bound to middle.
+       *   - If it's greater than the element, change the left bound to middle.
+       * @return The index of the found element.
+       */
+      public binarySearchOptimized(element:T):number {
+            var left = 0;
+            var right = this.length - 1;
+            while (right - left > 1) {
+                  var middle = (right + left)/2;
+                  if (this[middle] <= element) {
+                        left = middle;
+                  } else {
+                        right = middle;
+                  }
+            }
+            return this[left] === element ? left : -1;
+      }
+
+      /**
        * Binary Search - Recursive
        * - O(log(n))
        * - Check if the middle of a sorted array is the element.
@@ -506,6 +526,86 @@ export class MCArray<T> extends Array<T> {
 
             return -1;
       }
+
+      /**
+       * Exponential Search
+       * - O(log(n))
+       * - Binary search, except the function finds a smaller range where the element may occur before searching.
+       * @return The index of the found element.
+       */
+      public exponentialSearch(element:T):number {
+            if (this.length > 0) {
+
+                  if (this[0] === element) {
+                        return 0;
+                  }
+
+                  var i = 1;
+                  while (i < this.length && this[i] <= element) {
+                        i *= 2;
+                  }
+
+                  return this.binarySearchRecursive(element, i/2, Math.min(i, this.length));
+            }
+            return -1;
+      }
+
+      /**
+       * Fibonacci Search
+       * - O(log(n))
+       * - Binary search, except the function finds a smaller range where the element may occur before searching.
+       * @return The index of the found element.
+       */
+      public fibonacciSearch(element:T):number {
+
+            // Initialize fibonacci number - 2 and fibonacci number - 1
+            var fibMinus2 = 0;
+            var fibMinus1 = 1;
+
+            // Initialize fibonacci number
+            var fib = fibMinus2 + fibMinus1;
+
+            // Find the minimum fibonacci number greater than the length
+            while (fib < this.length) {
+                  fibMinus2 = fibMinus1;
+                  fibMinus1 = fib;
+                  fib = fibMinus1 + fibMinus2;
+            }
+
+            // Mark the eliminated range from the front
+            var offset = -1;
+
+            while (fib > 1) {
+
+                  // Check if fibMinus2 is a valid index
+                  var i = Math.min(offset + fibMinus2, this.length - 1);
+
+                  if (this[i] < element) {
+                        // If the element is greater than the value at index fibMinus2, cut the subarray from offset to i
+                        fib = fibMinus1;
+                        fibMinus1 = fibMinus2;
+                        fibMinus2 = fib - fibMinus1;
+                        offset = i;
+                  } else if (this[i] > element){
+                        // If the element is less than the value at index fibMinus2, cut the subarray after i + 1
+                        fib = fibMinus2;
+                        fibMinus1 = fibMinus1 - fibMinus2;
+                        fibMinus2 = fib - fibMinus1;
+                  } else {
+                        // Element found
+                        return i;
+                  }
+
+            }
+
+            if (this[offset + 1] === element) {
+                  return offset + 1;
+            }
+
+            return -1;
+      }
+
+
 
 
 

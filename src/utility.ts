@@ -37,7 +37,7 @@ export function analyze(func:Function, forObject:Object | null = null, ...withPa
       console.log(`
 ${timeIndicator} ${functionName} called${forObject != null ? ` on ❮ ${objectValue} ❯` : ""}
   ⮑ Returned: ${result}
-  📣 Called ${withParameters.length > 0 ? `with args: ${withParameters.join(",")}` : "with no arguments"}
+  📣 Called ${withParameters.length > 0 ? `with argument${withParameters.join(",").length != 1 ? "s" : ""} ( ${withParameters.join(",")} )` : "with no arguments"}
   ⏳ Took ${durationS}s`);
 };
 
