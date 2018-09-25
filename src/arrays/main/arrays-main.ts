@@ -12,20 +12,10 @@ import * as Utility from "../../utility";
  */
 export class MCArray<T> extends Array<T> {
 
-      // TODO:
-      // Bucket sort
-      // Bucket sort recursive
-      // Heapsort
-      // Heapsort recursive
-
-      // Interpolation Search
-      // The Ubiquitous Binary Search
-
       /**
-       * Create
+       * Constructor
        * - Creates an MCArray from a regular array.
-       * @param array Generic JavaScript array.
-       * @returns A new MCArray.
+       * @param items Variadic array elements.
        */
       constructor(...items:Array<T>) {
             super(...items);
@@ -604,9 +594,5 @@ export class MCArray<T> extends Array<T> {
 
             return -1;
       }
-
-
-
-
 
 }
