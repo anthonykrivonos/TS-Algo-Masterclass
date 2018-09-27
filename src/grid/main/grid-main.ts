@@ -41,9 +41,25 @@ export class MCGrid<T> {
        * @param value New value to set.
        * @param row Row index.
        * @param col Column index.
+       * @returns True if set, false otherwise.
        */
-      public set(value:T, row:number, col:number):void {
-            this.grid[row][col] = value;
+      public set(value:T, row:number, col:number):boolean {
+            if (this.isValidIndex(row, col)) {
+                  this.grid[row][col] = value;
+                  return true;
+            }
+            return false;
+      }
+
+      /**
+       * Is Valid Index
+       * - Checks to see if the index exists in the grid.
+       * @param row Row index.
+       * @param col Column index.
+       * @returns True if valid, false otherwise.
+       */
+      public isValidIndex(row:number, col:number):boolean {
+            return row >= 0 && col >= 0 && this.grid.length > row && this.grid[row].length > col;
       }
 
       /**
@@ -86,9 +102,9 @@ export class MCGrid<T> {
       /**
        * Sort
        * - Merge sorts the grid row by row, column by column, in ascending order.
-       * @returns The new MCArray.
+       * @returns The sorted MCGrid.
        */
-      public sort(callback:Function):void {
+      public sort(callback:Function):MCGrid<T> {
             var flattenedSortedGrid = this.flattened().mergeSort();
             var i = 0;
             this.map(() => {
@@ -96,6 +112,28 @@ export class MCGrid<T> {
                   i++;
                   return sortedValue;
             });
+            return this;
       }
+
+      /**
+       * Flood Fill
+       * - Recursively fills the grid with the given element until the same element is found as a neighbor.
+       * - Starts at a row and column index.
+       * - Like the paint bucket tool on most drawing apps.
+       * @param withElement The element to fill with.
+       * @param atRow The row to start from.
+       * @param atCol The column to start from.
+       */
+      public floodFill(withElement:T, atRow:number, atCol:number):void {
+            if (this.isValidIndex(atRow, atCol) && this.get(atRow, atCol) != withElement) {
+                  this.set(withElement, atRow, atCol);
+                  this.floodFill(withElement, atRow - 1, atCol);
+                  this.floodFill(withElement, atRow + 1, atCol);
+                  this.floodFill(withElement, atRow, atCol - 1);
+                  this.floodFill(withElement, atRow, atCol + 1);
+            }
+      }
+
+      // https://www.geeksforgeeks.org/a-search-algorithm/
 
 }
