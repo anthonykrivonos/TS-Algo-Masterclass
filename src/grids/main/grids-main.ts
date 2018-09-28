@@ -2,7 +2,7 @@
  * Anthony Krivonos
  * Typescript Algorithm Masterclass
  * 09.20.2018
- * Arrays/Main
+ * Grids/Main
  */
 
 import * as Utility from "../../utility";

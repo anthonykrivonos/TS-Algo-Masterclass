@@ -47,6 +47,15 @@ export class MCArray<T> extends Array<T> {
       }
 
       /**
+       * isEmpty
+       * - Checks to see if the MCArray is empty
+       * @returns True if empty, else false.
+       */
+      public isEmpty():boolean {
+            return this.length === 0;
+      }
+
+      /**
        * Shuffled
        * - Returns a shuffled version of the MCArray, without modifying it.
        * @returns A shuffled MCArray.
