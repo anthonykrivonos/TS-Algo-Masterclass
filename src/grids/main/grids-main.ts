@@ -64,6 +64,7 @@ export class MCGrid<T> {
 
       /**
        * For Each
+       * TODO: - Test
        * - Loops through every value in the grid and calls a callback.
        * @param callback Function with parameters (value, row, column) called on every iteration.
        */
@@ -77,6 +78,7 @@ export class MCGrid<T> {
 
       /**
        * Map
+       * TODO: - Test
        * - Loops through every value in the grid and calls a callback.
        * @param callback Function with parameters (value, row, column) that returns a new value for grid[row][column].
        */
@@ -90,6 +92,7 @@ export class MCGrid<T> {
 
       /**
        * Flattened
+       * TODO: - Test
        * - Returns the grid as a one-dimensional array.
        * @returns The grid as an MCArray.
        */
@@ -101,6 +104,7 @@ export class MCGrid<T> {
 
       /**
        * Sort
+       * TODO: - Test
        * - Merge sorts the grid row by row, column by column, in ascending order.
        * @returns The sorted MCGrid.
        */
@@ -117,6 +121,7 @@ export class MCGrid<T> {
 
       /**
        * Flood Fill
+       * TODO: - Test
        * - Recursively fills the grid with the given element until the same element is found as a neighbor.
        * - Starts at a row and column index.
        * - Like the paint bucket tool on most drawing apps.

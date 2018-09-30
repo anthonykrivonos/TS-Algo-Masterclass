@@ -41,6 +41,7 @@ export class MCGraph<T> {
 
       /**
       * Add Edge
+      * TODO: - Test
       * - Adds a vertex to the graph.
       * @param from One vertex to create the edge from.
       * @param to One vertex to create the edge to.
@@ -57,6 +58,7 @@ export class MCGraph<T> {
 
       /**
       * Remove Vertex
+      * TODO: - Test
       * - Removes a vertex from the graph.
       * - Removes all edges connected to other vertices.
       * @param vertex Vertex to add.
@@ -79,6 +81,7 @@ export class MCGraph<T> {
 
       /**
       * Remove Edge
+      * TODO: - Test
       * - Removes an edge from the graph.
       * @param from One vertex to remove the edge from.
       * @param to One vertex to remove the edge to.
@@ -97,6 +100,7 @@ export class MCGraph<T> {
 
       /**
       * Breadth First Traversal
+      * TODO: - Test
       * - O(n)
       * - Search each neighboring vertex.
       * - If not found, search the depth of each neighboring vertex.
