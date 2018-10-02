@@ -48,6 +48,47 @@ export class MCLinkedList<T> {
             return 0;
       }
 
+      /**
+       * Insert
+       * - Inserts a node into the linked list at the specified position.
+       * - Pushes the node if the index is invalid.
+       * @param index Index to insert the node at.
+       * @param node Node to insert into the list.
+       */
+      public insert(index:number, node:MCLinkedListNode<T>):void {
+            if (index >= this.size()) {
+                  this.push(node);
+            } else if (index > 0) {
+                  var i = 0;
+                  let currentNode = this.head;
+                  while (i < index) {
+                        i++;
+                        currentNode = currentNode.getNext()!;
+                  }
+                  let tempNext = currentNode.getNext()!;
+                  currentNode.setNext(node);
+                  node.setNext(tempNext);
+            } else if (index == 0) {
+                  let tempNext = this.head;
+                  node.setNext(this.head);
+                  this.head = node;
+            }
+      }
+
+
+      /**
+       * Push
+       * - Pushes a node at the end of the linked list.
+       * @param node Node to insert into the list.
+       */
+      public push(node:MCLinkedListNode<T>):void {
+            let currentNode = this.head;
+            while (currentNode.hasNext()) {
+                  currentNode = currentNode.getNext()!;
+            }
+            currentNode.setNext(node);
+      }
+
 }
 
 /**
@@ -84,6 +125,15 @@ export class MCLinkedListNode<T> {
        */
       public getNext():MCLinkedListNode<T> | null {
             return this.next;
+      }
+
+      /**
+       * Set Next
+       * - Sets the next node.
+       * @param node Node to set the next node to.
+       */
+      public setNext(node:MCLinkedListNode<T>):void {
+            this.next = node;
       }
 
       /**
