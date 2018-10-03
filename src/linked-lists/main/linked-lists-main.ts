@@ -23,6 +23,7 @@ export class MCLinkedList<T> {
 
       /**
        * Size
+       * TODO: - Test
        * - Get the size of the linked list.
        * @returns The size of the list.
        */
@@ -38,6 +39,7 @@ export class MCLinkedList<T> {
 
       /**
        * Size - Recursive
+       * TODO: - Test
        * - Get the size of the linked list.
        * @returns The size of the list.
        */
@@ -50,6 +52,7 @@ export class MCLinkedList<T> {
 
       /**
        * Insert
+       * TODO: - Test
        * - Inserts a node into the linked list at the specified position.
        * - Pushes the node if the index is invalid.
        * @param index Index to insert the node at.
@@ -78,6 +81,7 @@ export class MCLinkedList<T> {
 
       /**
        * Push
+       * TODO: - Test
        * - Pushes a node at the end of the linked list.
        * @param node Node to insert into the list.
        */
@@ -87,6 +91,40 @@ export class MCLinkedList<T> {
                   currentNode = currentNode.getNext()!;
             }
             currentNode.setNext(node);
+      }
+
+
+
+      /**
+       * Delete
+       * TODO: - Test
+       * - Deletes the node at the specified index.
+       * @param index Index from where to delete the node.
+       * @returns The deleted node.
+       */
+      public delete(index:number):MCLinkedListNode<T> | null {
+            if (index === 0) {
+                  let newHead = this.head.getNext()!;
+                  this.head = newHead;
+            } else if (index < this.size() - 1) {
+                  var i = 0;
+                  var currentNode = this.head;
+                  while (i < index - 1) {
+                         currentNode = currentNode.getNext()!;
+                         i++;
+                  }
+                  let nextNextNode = currentNode.getNext()!.getNext()!;
+                  currentNode.setNext(nextNextNode);
+            } else if (index === this.size() - 1) {
+                  var i = 0;
+                  var currentNode = this.head;
+                  while (i < this.size() - 1) {
+                        currentNode = currentNode.getNext()!;
+                        i++;
+                  }
+                  currentNode.setNext(null);
+            }
+            return null
       }
 
 }
@@ -101,6 +139,7 @@ export class MCLinkedListNode<T> {
 
       /**
        * Constructor
+       * TODO: - Test
        * - Creates an MCMap from a regular map.
        * @param map Optional map to reconstruct.
        */
@@ -111,6 +150,7 @@ export class MCLinkedListNode<T> {
 
       /**
        * Get Value
+       * TODO: - Test
        * - Gets the value of the node.
        * @returns Returns the value.
        */
@@ -120,6 +160,7 @@ export class MCLinkedListNode<T> {
 
       /**
        * Get Next
+       * TODO: - Test
        * - Gets the next node.
        * @returns Returns the next node.
        */
@@ -129,15 +170,17 @@ export class MCLinkedListNode<T> {
 
       /**
        * Set Next
+       * TODO: - Test
        * - Sets the next node.
        * @param node Node to set the next node to.
        */
-      public setNext(node:MCLinkedListNode<T>):void {
+      public setNext(node:MCLinkedListNode<T> | null):void {
             this.next = node;
       }
 
       /**
        * Has Next
+       * TODO: - Test
        * - Checks for the next node.
        * @returns Returns true if the linked list node has next node.
        */
