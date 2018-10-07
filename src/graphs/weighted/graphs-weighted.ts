@@ -14,49 +14,7 @@ import { MCQueue } from "../../queues/main/queues-main";
 */
 export class MCWeightedGraph<T> {
 
-      private adjacencyWeightedMap:MCMap<MCWeightedVertex<T>, MCArray<MCWeightedVertex<T>>>;
-
-      /**
-      * Map Get
-      * - Gets a weighted vertex from the map from a given vertex.
-      * @param vertex Vertex to get.
-      * @returns MCWeightedVertex for the given vertex or null if not found.
-      */
-      private mapGet(vertex:T):MCWeightedVertex<T> | null {
-            let adjacencyWeightedKeys = Array.from(this.adjacencyWeightedMap.keys());
-            for (var i = 0; i < adjacencyWeightedKeys.length; i++) {
-                  if (adjacencyWeightedKeys[i].vertex === vertex) {
-                        return adjacencyWeightedKeys[i];
-                  }
-            }
-            return null;
-      }
-
-      /**
-      * Map Get Edges
-      * - Gets a weighted vertex's edges in a map from a given vertex.
-      * @param vertex Vertex to get the edges for.
-      * @returns MCArray of MCWeightedVertex edges or an empty array if not found.
-      */
-      private mapGetEdges(vertex:T):MCArray<MCWeightedVertex<T>> {
-            let adjacencyWeightedKeys = Array.from(this.adjacencyWeightedMap.keys());
-            for (var i = 0; i < adjacencyWeightedKeys.length; i++) {
-                  if (adjacencyWeightedKeys[i].vertex === vertex) {
-                        return this.adjacencyWeightedMap.get(adjacencyWeightedKeys[i]!)!;
-                  }
-            }
-            return new MCArray<MCWeightedVertex<T>>();
-      }
-
-      /**
-      * Map Has
-      * - Checks to see if the weighted adjacency map has a vertex.
-      * @param vertex Vertex to check for.
-      * @returns True if it contains the vertex, false otherwise.
-      */
-      private mapHas(vertex:T):boolean {
-            return this.mapGet(vertex) != null;
-      }
+      private adjacencyWeightedMap:MCMap<T, MCArray<MCWeightedVertex<T>>>;
 
       /**
       * Constructor
@@ -64,7 +22,7 @@ export class MCWeightedGraph<T> {
       * @param map Optional map to reconstruct.
       */
       constructor() {
-            this.adjacencyWeightedMap = new MCMap<MCWeightedVertex<T>, MCArray<MCWeightedVertex<T>>>();
+            this.adjacencyWeightedMap = new MCMap<T, MCArray<MCWeightedVertex<T>>>();
       }
 
       /**
@@ -75,9 +33,8 @@ export class MCWeightedGraph<T> {
       * @returns True if the vertex was added, false otherwise.
       */
       public addVertex(vertex:T, weight:number):boolean {
-            let weightedVertex = new MCWeightedVertex(vertex, weight);
-            if (!this.adjacencyWeightedMap.has(weightedVertex)) {
-                  this.adjacencyWeightedMap.set(weightedVertex, new MCArray<MCWeightedVertex<T>>());
+            if (!this.adjacencyWeightedMap.has(vertex)) {
+                  this.adjacencyWeightedMap.set(vertex, new MCArray<MCWeightedVertex<T>>());
                   return true;
             }
             return false;
@@ -91,17 +48,14 @@ export class MCWeightedGraph<T> {
       * @param to One vertex to create the edge to.
       * @returns True if the edge was added, false otherwise.
       */
-      public addEdge(from:T, to:T):boolean {
+      public addEdge(from:T, to:T, weight:number):boolean {
 
-            let fromVertex = this.mapGet(from)!;
-            let toVertex = this.mapGet(to)!;
+            let weightedVertex = new MCWeightedVertex(to, weight);
 
-            if (fromVertex != null && toVertex != null) {
-                  if (this.adjacencyWeightedMap.get(fromVertex!)!.includes(toVertex!) && this.adjacencyWeightedMap.get(toVertex!)!.includes(fromVertex!)) {
-                        this.adjacencyWeightedMap.get(fromVertex)!.push(toVertex);
-                        this.adjacencyWeightedMap.get(toVertex)!.push(fromVertex);
-                        return true;
-                  }
+            let weightedEdges = this.adjacencyWeightedMap.get(from);
+            if (weightedEdges != null && !weightedEdges.includes(weightedVertex)) {
+                  weightedEdges!.push(weightedVertex);
+                  return true;
             }
 
             return false;
@@ -116,13 +70,13 @@ export class MCWeightedGraph<T> {
       * @returns True if the vertex was removed, false otherwise.
       */
       public removeVertex(vertex:T):boolean {
-            let weightedVertex = this.mapGet(vertex)
-            if (weightedVertex != null) {
-                  this.adjacencyWeightedMap.delete(weightedVertex!);
+            if (this.adjacencyWeightedMap.has(vertex)) {
+                  this.adjacencyWeightedMap.delete(vertex);
                   this.adjacencyWeightedMap.forEach((adjacencyList, adjacentVertex) => {
-                        let indexOfVertex = adjacencyList.indexOf(weightedVertex!);
-                        if (indexOfVertex > -1) {
-                              adjacencyList.splice(indexOfVertex, 1);
+                        for (var i = 0; i < adjacencyList.length; i++) {
+                              if (adjacencyList[i].vertex == vertex) {
+                                    adjacencyList.splice(i, 1);
+                              }
                         }
                         this.adjacencyWeightedMap.set(adjacentVertex, adjacencyList);
                   });
@@ -140,17 +94,13 @@ export class MCWeightedGraph<T> {
       * @returns True if the edge was removed, false otherwise.
       */
       public removeEdge(from:T, to:T):boolean {
-
-            let fromVertex = this.mapGet(from);
-            let toVertex = this.mapGet(to);
-
-            if (fromVertex != null && toVertex != null) {
-                  if (this.adjacencyWeightedMap.get(fromVertex!)!.includes(toVertex!) && this.adjacencyWeightedMap.get(toVertex!)!.includes(fromVertex!)) {
-                        let indexOfTo = this.adjacencyWeightedMap.get(fromVertex!)!.indexOf(toVertex!);
-                        let indexOfFrom = this.adjacencyWeightedMap.get(toVertex!)!.indexOf(fromVertex!);
-                        this.adjacencyWeightedMap.get(fromVertex!)!.splice(indexOfTo, 1);
-                        this.adjacencyWeightedMap.get(toVertex!)!.splice(indexOfFrom, 1);
-                        return true;
+            if (this.adjacencyWeightedMap.has(from)) {
+                  let weightedEdges = this.adjacencyWeightedMap.get(from)!;
+                  for (var i = 0; i < weightedEdges.length; i++) {
+                        if (weightedEdges[i].vertex == to) {
+                              weightedEdges.splice(i, 1);
+                              return true;
+                        }
                   }
             }
 
@@ -177,9 +127,9 @@ export class MCWeightedGraph<T> {
 
             // Recur while visit queue is non-empty
             while (!visit.isEmpty()) {
-                  let currentVertex = visit.poll() as MCWeightedVertex<T>;
+                  let currentVertex = visit.poll() as T;
 
-                  if (currentVertex.vertex === find) {
+                  if (currentVertex === find) {
                         return true;
                   }
 
@@ -204,6 +154,12 @@ class MCWeightedVertex<T> {
       public vertex:T;
       public weight:number;
 
+      /**
+      * Constructor
+      * - Constructs a weighted vertex from a vertex value and a weight.
+      * @param vertex The actual value of the vertex.
+      * @param weight The weight associated with an edge to this vertex.
+      */
       constructor(vertex:T, weight:number) {
             this.vertex = vertex;
             this.weight = weight;

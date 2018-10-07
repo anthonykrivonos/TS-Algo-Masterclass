@@ -5,8 +5,6 @@
  * Trees/Binary/Main
  */
 
-import * as Utility from "../../../utility";
-
 /**
  * Masterclass regular binary tree.
  */
