@@ -63,6 +63,32 @@ export class MCBinaryTree<T> {
             }
       }
 
+      /**
+       * Get Maximum Depth
+       * - Returns the maxiumum height from the given node.
+       * @param node The node to get depth from.
+       * @returns The maxium depth of the tree.
+       */
+      public getMaximumDepth(node:MCBinaryTreeNode<T> | null = this.root):number {
+            if (node) {
+                  return 1 + Math.max(this.getMaximumDepth(node.left), this.getMaximumDepth(node.right));
+            }
+            return 0;
+      }
+
+      /**
+       * Get Count
+       * - Returns the number of nodes in the tree.
+       * @param node The node to get depth from.
+       * @returns The maxium depth of the tree.
+       */
+      public getCount(node:MCBinaryTreeNode<T> | null = this.root):number {
+            if (node) {
+                  return 1 + this.getCount(node.left) + this.getCount(node.right);
+            }
+            return 0;
+      }
+
 }
 
 /**
