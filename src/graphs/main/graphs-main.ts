@@ -101,7 +101,7 @@ export class MCGraph<T> {
       /**
       * Breadth First Traversal
       * TODO: - Test
-      * - O(n)
+      * - O(n^2)
       * - Search each neighboring vertex.
       * - If not found, search the depth of each neighboring vertex.
       * - Keep track of checked vertices.
@@ -133,6 +133,46 @@ export class MCGraph<T> {
             }
 
             return false;
+      }
+
+      /**
+      * Depth First Traversal
+      * TODO: - Test
+      * - O(n^2)
+      * - Search the deepest child of the current vertex.
+      * - Recur to neighboring vertices.
+      * @param from Vertex to start the search from.
+      * @param for Vertex to search for.
+      * @returns True if the vertex was found, false otherwise.
+      */
+      public depthFirstSearch(from:T, find:T):boolean {
+
+            // Keeps track of visited vertices
+            var visited = new MCMap();
+            Array.from(this.adjacencyMap.keys()).forEach((key:T) => {
+                  visited.set(key, false);
+            });
+
+            // Helper function
+            let depthFirstTraversal = (vertex:T, goal:T):boolean => {
+                  if (vertex == goal) {
+                        return true;
+                  }
+
+                  // Visit the from element
+                  visited.set(vertex, true);
+
+                  // Recur for every adjacent node
+                  for (var i = 0; i < this.adjacencyMap.get(vertex)!.length; i++) {
+                        let adjacentVertex = this.adjacencyMap.get(vertex)![i];
+                        if (!visited.get(adjacentVertex)) {
+                              return false || depthFirstTraversal(adjacentVertex, goal);
+                        }
+                  }
+                  return false;
+            };
+
+            return depthFirstTraversal(from, find);
       }
 
 }

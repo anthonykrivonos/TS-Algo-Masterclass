@@ -14,7 +14,7 @@ import { MCQueue } from "../../queues/main/queues-main";
 */
 export class MCWeightedGraph<T> {
 
-      private adjacencyWeightedMap:MCMap<T, MCArray<MCWeightedVertex<T>>>;
+      private adjacencyWeightedMap:MCMap<T, MCArray<MCWeightedEdge<T>>>;
 
       /**
       * Constructor
@@ -22,7 +22,7 @@ export class MCWeightedGraph<T> {
       * @param map Optional map to reconstruct.
       */
       constructor() {
-            this.adjacencyWeightedMap = new MCMap<T, MCArray<MCWeightedVertex<T>>>();
+            this.adjacencyWeightedMap = new MCMap<T, MCArray<MCWeightedEdge<T>>>();
       }
 
       /**
@@ -34,7 +34,7 @@ export class MCWeightedGraph<T> {
       */
       public addVertex(vertex:T, weight:number):boolean {
             if (!this.adjacencyWeightedMap.has(vertex)) {
-                  this.adjacencyWeightedMap.set(vertex, new MCArray<MCWeightedVertex<T>>());
+                  this.adjacencyWeightedMap.set(vertex, new MCArray<MCWeightedEdge<T>>());
                   return true;
             }
             return false;
@@ -50,7 +50,7 @@ export class MCWeightedGraph<T> {
       */
       public addEdge(from:T, to:T, weight:number):boolean {
 
-            let weightedVertex = new MCWeightedVertex(to, weight);
+            let weightedVertex = new MCWeightedEdge(to, weight);
 
             let weightedEdges = this.adjacencyWeightedMap.get(from);
             if (weightedEdges != null && !weightedEdges.includes(weightedVertex)) {
@@ -110,7 +110,7 @@ export class MCWeightedGraph<T> {
       /**
       * Breadth First Traversal
       * TODO: - Test
-      * - O(n)
+      * - O(n^2)
       * - Search each neighboring vertex.
       * - If not found, search the depth of each neighboring vertex.
       * - Keep track of checked vertices.
@@ -144,12 +144,52 @@ export class MCWeightedGraph<T> {
             return false;
       }
 
+      /**
+      * Depth First Traversal
+      * TODO: - Test
+      * - O(n^2)
+      * - Search the deepest child of the current vertex.
+      * - Recur to neighboring vertices.
+      * @param from Vertex to start the search from.
+      * @param for Vertex to search for.
+      * @returns True if the vertex was found, false otherwise.
+      */
+      public depthFirstSearch(from:T, find:T):boolean {
+
+            // Keeps track of visited vertices
+            var visited = new MCMap();
+            Array.from(this.adjacencyWeightedMap.keys()).forEach((key:T) => {
+                  visited.set(key, false);
+            });
+
+            // Helper function
+            let depthFirstTraversal = (vertex:T, goal:T):boolean => {
+                  if (vertex == goal) {
+                        return true;
+                  }
+
+                  // Visit the from element
+                  visited.set(vertex, true);
+
+                  // Recur for every adjacent node
+                  for (var i = 0; i < this.adjacencyWeightedMap.get(vertex)!.length; i++) {
+                        let adjacentVertex = this.adjacencyWeightedMap.get(vertex)![i];
+                        if (!visited.get(adjacentVertex.vertex)) {
+                              return false || depthFirstTraversal(adjacentVertex.vertex, goal);
+                        }
+                  }
+                  return false;
+            };
+
+            return depthFirstTraversal(from, find);
+      }
+
 }
 
 /**
-* Masterclass weighted vertex implementation.
+* Masterclass weighted edge implementation.
 */
-class MCWeightedVertex<T> {
+class MCWeightedEdge<T> {
 
       public vertex:T;
       public weight:number;
