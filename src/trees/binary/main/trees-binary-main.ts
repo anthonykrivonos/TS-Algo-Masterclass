@@ -94,7 +94,7 @@ export class MCBinaryTree<T> {
 /**
  * Masterclass binary tree node.
  */
-class MCBinaryTreeNode<T> {
+export class MCBinaryTreeNode<T> {
 
       public value:T;
       public left:MCBinaryTreeNode<T> | null;
@@ -107,7 +107,7 @@ class MCBinaryTreeNode<T> {
        * @param left The node's left child.
        * @param right The node's right child.
        */
-      constructor(value:T, left:MCBinaryTreeNode<T> | null, right:MCBinaryTreeNode<T> | null) {
+      constructor(value:T, left:MCBinaryTreeNode<T> | null = null, right:MCBinaryTreeNode<T> | null = null) {
             this.value = value;
             this.left = left;
             this.right = right;
