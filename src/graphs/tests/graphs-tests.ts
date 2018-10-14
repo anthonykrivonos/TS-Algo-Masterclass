@@ -20,7 +20,7 @@ Utility.analyze(MCGraph.prototype.addVertex, graph, 1);
 Utility.analyze(MCGraph.prototype.addVertex, graph, 2);
 Utility.analyze(MCGraph.prototype.addVertex, graph, 3);
 
-// Test Edge Adding
+// Test Edge Adding I
 Utility.analyze(MCGraph.prototype.addEdge, graph, 1, 3);
 Utility.analyze(MCGraph.prototype.addEdge, graph, 1, 2);
 Utility.analyze(MCGraph.prototype.addEdge, graph, 2, 3);
@@ -29,8 +29,17 @@ Utility.analyze(MCGraph.prototype.addEdge, graph, 2, 3);
 Utility.analyze(MCGraph.prototype.breadthFirstSearch, graph, 1, 3);
 Utility.analyze(MCGraph.prototype.depthFirstSearch, graph, 1, 3);
 
+// Test Edge Adding II
+Utility.analyze(MCGraph.prototype.addEdge, graph, 3, 1);
+
+// Test Check for Cycles I
+Utility.analyze(MCGraph.prototype.isCyclic, graph);
+
 // Test Vertex Removal
 Utility.analyze(MCGraph.prototype.removeVertex, graph, 3);
+
+// Test Check for Cycles II
+Utility.analyze(MCGraph.prototype.isCyclic, graph);
 
 // Test Search II
 Utility.analyze(MCGraph.prototype.breadthFirstSearch, graph, 1, 3);

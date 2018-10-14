@@ -189,6 +189,64 @@ export class MCGraph<T> {
       }
 
       /**
+      * Is Cyclic
+      * - O(n^2)
+      * - Checks to see if the graph contains cycles.
+      * @returns True if a cycle is found, false otherwise.
+      */
+      public isCyclic():boolean {
+
+            // Constants to keep track of visits and recurrences in the map
+            let VISIT_KEY:string = "visited";
+            let RECUR_KEY:string = "recurred";
+
+            // Keeps track of visited vertices
+            var tracker = new MCMap<T, MCMap<string, boolean>>();
+            this.adjacencyMap.keys().forEach((key:T) => {
+                  var keyTrack = new MCMap<string, boolean>();
+                  keyTrack.set(VISIT_KEY, false);
+                  keyTrack.set(RECUR_KEY, false);
+                  tracker.set(key, keyTrack);
+            });
+
+            // Cycle utility function
+            let isCyclicChain = (vertex:T):boolean => {
+                  // Assure the vertex is not visited
+                  if (!tracker.get(vertex)!.get(VISIT_KEY)) {
+                        // Mark the vertex as visited
+                        tracker.get(vertex)!.set(VISIT_KEY, true);
+                        tracker.get(vertex)!.set(RECUR_KEY, true);
+
+                        // Recur for all adjacent vertices
+                        for (var i = 0; i < this.adjacencyMap.get(vertex)!.length; i++) {
+                              let adjacentVertex = this.adjacencyMap.get(vertex)![i];
+                              let isRecurred = tracker.get(adjacentVertex)!.get(RECUR_KEY);
+                              let isVisited = tracker.get(adjacentVertex)!.get(VISIT_KEY);
+
+                              // If the adjacent vertex was recurred in this chain or has a cyclic chain, return true
+                              if (isRecurred || (isVisited && isCyclicChain(adjacentVertex))) {
+                                    return true;
+                              }
+                        }
+                  }
+                  // Remove the vertex from the recurrence chain
+                  tracker.get(vertex)!.set(RECUR_KEY, true);
+
+                  // Return false for no found cycles
+                  return false;
+            };
+
+            let keys = this.adjacencyMap.keys();
+            for (var i = 0; i < keys.length; i++) {
+                  if (isCyclicChain(keys[i])) {
+                        return true;
+                  }
+            }
+
+            return false;
+      }
+
+      /**
       * To String
       * - O(n)
       * - Returns the graph as a string in neat format.

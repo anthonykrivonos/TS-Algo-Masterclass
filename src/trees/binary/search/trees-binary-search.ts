@@ -13,15 +13,6 @@
 export class MCBinarySearchTree<T> extends MCBinaryTree<T> {
 
       /**
-       * Constructor
-       * - Creates a binary tree.
-       * @param root The root of the binary tree. Can't be null.
-       */
-      constructor(root:MCBinaryTreeNode<T>) {
-            super(root);
-      }
-
-      /**
        * Insert
        * TODO: - Test
        * - Inserts a value into the binary search tree.
@@ -30,12 +21,15 @@ export class MCBinarySearchTree<T> extends MCBinaryTree<T> {
        * @returns The inserted node.
        */
       public insert(value:T, node:MCBinaryTreeNode<T> | null = this.root):MCBinaryTreeNode<T> {
-            if (!node) {
+            if (!this.root) {
+                  this.root = new MCBinaryTreeNode(value);
+                  return this.root;
+            } else if (!node) {
                   return new MCBinaryTreeNode(value);
-            } else if (value < node!.value) {
-                  node.left = this.insert(value, node.left);
-            } else if (value > node!.value) {
-                  node.right = this.insert(value, node.right);
+            } else if (value < node!.getValue()) {
+                  node.setLeft(this.insert(value, node.getLeft()));
+            } else if (value > node!.getValue()) {
+                  node.setRight(this.insert(value, node.getRight()));
             }
             return node;
       }
@@ -51,12 +45,12 @@ export class MCBinarySearchTree<T> extends MCBinaryTree<T> {
       public find(value:T, node:MCBinaryTreeNode<T> | null = this.root):MCBinaryTreeNode<T> | null {
             if (!node) {
                   return null;
-            } else if (node.value == value) {
+            } else if (node.getValue() == value) {
                   return node!;
-            } else if (value < node!.value) {
-                  return this.find(value, node.left);
+            } else if (value < node!.getValue()) {
+                  return this.find(value, node.getLeft());
             }
-            return this.find(value, node.right);
+            return this.find(value, node.getRight());
       }
 
 
