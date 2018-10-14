@@ -26,13 +26,12 @@ export class MCWeightedGraph<T> {
       }
 
       /**
-      * Add Weighted Vertex
+      * Add Vertex
       * - Adds a vertex to the graph.
       * @param vertex Vertex to add.
-      * @param weight Weight of vertex to add.
       * @returns True if the vertex was added, false otherwise.
       */
-      public addVertex(vertex:T, weight:number):boolean {
+      public addVertex(vertex:T):boolean {
             if (!this.adjacencyWeightedMap.has(vertex)) {
                   this.adjacencyWeightedMap.set(vertex, new MCArray<MCWeightedEdge<T>>());
                   return true;
@@ -41,29 +40,25 @@ export class MCWeightedGraph<T> {
       }
 
       /**
-      * Add Weighted Edge
-      * TODO: - Test
+      * Add Edge
       * - Adds a weighted edge to the graph.
       * @param from One vertex to create the edge from.
       * @param to One vertex to create the edge to.
+      * @param weight The weight of the edge.
       * @returns True if the edge was added, false otherwise.
       */
       public addEdge(from:T, to:T, weight:number):boolean {
+            let weightedEdge = new MCWeightedEdge(from, to, weight);
 
-            let weightedVertex = new MCWeightedEdge(to, weight);
-
-            let weightedEdges = this.adjacencyWeightedMap.get(from);
-            if (weightedEdges != null && !weightedEdges.includes(weightedVertex)) {
-                  weightedEdges!.push(weightedVertex);
+            if (this.adjacencyWeightedMap.has(from) && this.adjacencyWeightedMap.has(to) && !this.adjacencyWeightedMap.get(from)!.includes(weightedEdge)) {
+                  this.adjacencyWeightedMap.get(from)!.push(weightedEdge);
                   return true;
             }
-
             return false;
       }
 
       /**
-      * Remove Weighted Vertex
-      * TODO: - Test
+      * Remove Vertex
       * - Removes a vertex from the graph.
       * - Removes all edges connected to other vertices.
       * @param vertex Vertex to add.
@@ -71,14 +66,19 @@ export class MCWeightedGraph<T> {
       */
       public removeVertex(vertex:T):boolean {
             if (this.adjacencyWeightedMap.has(vertex)) {
-                  this.adjacencyWeightedMap.delete(vertex);
-                  this.adjacencyWeightedMap.forEach((adjacencyList, adjacentVertex) => {
-                        for (var i = 0; i < adjacencyList.length; i++) {
-                              if (adjacencyList[i].vertex == vertex) {
-                                    adjacencyList.splice(i, 1);
+                  this.adjacencyWeightedMap.remove(vertex);
+                  this.adjacencyWeightedMap.forEach((adjacentVertex:T, weightedAdjacencyList:MCArray<MCWeightedEdge<T>>) => {
+                        var edgeIndex = -1;
+                        for (var i = 0; i < weightedAdjacencyList.length; i++) {
+                              if (weightedAdjacencyList[i].to == vertex) {
+                                    edgeIndex = i;
+                                    break;
                               }
                         }
-                        this.adjacencyWeightedMap.set(adjacentVertex, adjacencyList);
+                        if (edgeIndex >= 0) {
+                              weightedAdjacencyList.splice(edgeIndex, 1);
+                              this.adjacencyWeightedMap.set(adjacentVertex, weightedAdjacencyList);
+                        }
                   });
                   return true;
             }
@@ -86,30 +86,35 @@ export class MCWeightedGraph<T> {
       }
 
       /**
-      * Remove Weighted Edge
-      * TODO: - Test
+      * Remove Edge
       * - Removes an edge from the graph.
       * @param from One vertex to remove the edge from.
       * @param to One vertex to remove the edge to.
       * @returns True if the edge was removed, false otherwise.
       */
       public removeEdge(from:T, to:T):boolean {
+            var edgeIndex = -1;
             if (this.adjacencyWeightedMap.has(from)) {
-                  let weightedEdges = this.adjacencyWeightedMap.get(from)!;
-                  for (var i = 0; i < weightedEdges.length; i++) {
-                        if (weightedEdges[i].vertex == to) {
-                              weightedEdges.splice(i, 1);
-                              return true;
+                  // Find the index of the edge to remove
+                  let weightedAdjacencyList = this.adjacencyWeightedMap.get(from)!;
+                  for (var i = 0; i < weightedAdjacencyList.length; i++) {
+                        if (weightedAdjacencyList[i].to == to) {
+                              edgeIndex = i;
+                              break;
                         }
                   }
+                  if (edgeIndex >= 0) {
+                        // Remove the found edge
+                        this.adjacencyWeightedMap.get(from)!.splice(edgeIndex, 1);
+                        return true;
+                  }
             }
-
+            // Edge not found
             return false;
       }
 
       /**
       * Breadth First Traversal
-      * TODO: - Test
       * - O(n^2)
       * - Search each neighboring vertex.
       * - If not found, search the depth of each neighboring vertex.
@@ -119,26 +124,41 @@ export class MCWeightedGraph<T> {
       * @returns True if the vertex was found, false otherwise.
       */
       public breadthFirstSearch(from:T, find:T):boolean {
-            var visited = new MCArray();
-            var visit = new MCQueue();
+
+            // Keeps track of visited vertices
+            var visitMap = new MCMap();
+            this.adjacencyWeightedMap.keys().forEach((key:T) => {
+                  visitMap.set(key, false);
+            });
+
+            // Queue that keeps track of visited vertices
+            var visitQueue = new MCQueue<T>();
+
+            // Function that marks a vertex as visited
+            let visit = (vertex:T) => {
+                  visitQueue.add(vertex);
+                  visitMap.set(vertex, true);
+            }
 
             // Visit the from element
-            visited.push(from);
+            visit(from);
 
             // Recur while visit queue is non-empty
-            while (!visit.isEmpty()) {
-                  let currentVertex = visit.poll() as T;
+            while (!visitQueue.isEmpty()) {
 
-                  if (currentVertex === find) {
+                  // Take the last element from the visit queue
+                  let currentVertex = visitQueue.poll();
+
+                  // Return true if the vertex is found
+                  if (currentVertex == find) {
                         return true;
+                  } else {
+                        this.adjacencyWeightedMap.get(currentVertex!)!.forEach((weightedEdge:MCWeightedEdge<T>) => {
+                              if (!visitMap.get(weightedEdge.to)) {
+                                    visit(weightedEdge.to);
+                              }
+                        });
                   }
-
-                  this.adjacencyWeightedMap.get(currentVertex)!.forEach((vertex) => {
-                        if (!visited.includes(vertex)) {
-                              visited.push(vertex);
-                              visit.add(vertex);
-                        }
-                  });
             }
 
             return false;
@@ -146,7 +166,6 @@ export class MCWeightedGraph<T> {
 
       /**
       * Depth First Traversal
-      * TODO: - Test
       * - O(n^2)
       * - Search the deepest child of the current vertex.
       * - Recur to neighboring vertices.
@@ -158,30 +177,50 @@ export class MCWeightedGraph<T> {
 
             // Keeps track of visited vertices
             var visited = new MCMap();
-            Array.from(this.adjacencyWeightedMap.keys()).forEach((key:T) => {
+            this.adjacencyWeightedMap.keys().forEach((key:T) => {
                   visited.set(key, false);
             });
 
+            var found = false;
+
             // Helper function
-            let depthFirstTraversal = (vertex:T, goal:T):boolean => {
-                  if (vertex == goal) {
-                        return true;
-                  }
+            let depthFirstTraversal = (vertex:T, goal:T):void => {
 
                   // Visit the from element
                   visited.set(vertex, true);
 
-                  // Recur for every adjacent node
-                  for (var i = 0; i < this.adjacencyWeightedMap.get(vertex)!.length; i++) {
-                        let adjacentVertex = this.adjacencyWeightedMap.get(vertex)![i];
-                        if (!visited.get(adjacentVertex.vertex)) {
-                              return false || depthFirstTraversal(adjacentVertex.vertex, goal);
+                  if (vertex == goal) {
+                        // Set found to true and stop iteration
+                        found = true;
+                  } else {
+                        // Recur for every adjacent node
+                        let adjacencyList = this.adjacencyWeightedMap.get(vertex)!;
+                        for (var i = 0; i < adjacencyList.length; i++) {
+                              let adjacentEdge = adjacencyList[i];
+                              if (!visited.get(adjacentEdge.to)) {
+                                    depthFirstTraversal(adjacentEdge.to, goal);
+                              }
                         }
                   }
-                  return false;
             };
 
-            return depthFirstTraversal(from, find);
+            depthFirstTraversal(from, find);
+
+            return found;
+      }
+
+      /**
+      * To String
+      * - O(n)
+      * - Returns the weighted graph as a string in neat format.
+      * @returns A string representation of the graph.
+      */
+      public toString():string {
+            var graphStringList = new MCArray<string>();
+            this.adjacencyWeightedMap.forEach((vertex:T, weightedAdjacencyList:MCArray<MCWeightedEdge<T>>) => {
+                  graphStringList.push(`${vertex} => ${weightedAdjacencyList.map((weightedEdge:MCWeightedEdge<T>) => `${weightedEdge.to}{${weightedEdge.weight}}`).join(', ')}`);
+            });
+            return graphStringList.length > 0 ? `( ${graphStringList.join("; ")} )` : "()";
       }
 
 }
@@ -191,7 +230,8 @@ export class MCWeightedGraph<T> {
 */
 class MCWeightedEdge<T> {
 
-      public vertex:T;
+      public from:T;
+      public to:T;
       public weight:number;
 
       /**
@@ -200,8 +240,9 @@ class MCWeightedEdge<T> {
       * @param vertex The actual value of the vertex.
       * @param weight The weight associated with an edge to this vertex.
       */
-      constructor(vertex:T, weight:number) {
-            this.vertex = vertex;
+      constructor(from:T, to:T, weight:number) {
+            this.from = from;
+            this.to = to;
             this.weight = weight;
       }
 

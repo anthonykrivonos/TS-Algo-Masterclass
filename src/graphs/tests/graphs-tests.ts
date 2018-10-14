@@ -25,20 +25,20 @@ Utility.analyze(MCGraph.prototype.addEdge, graph, 1, 3);
 Utility.analyze(MCGraph.prototype.addEdge, graph, 1, 2);
 Utility.analyze(MCGraph.prototype.addEdge, graph, 2, 3);
 
-// Test Search Pt. I
+// Test Search I
 Utility.analyze(MCGraph.prototype.breadthFirstSearch, graph, 1, 3);
 Utility.analyze(MCGraph.prototype.depthFirstSearch, graph, 1, 3);
 
 // Test Vertex Removal
 Utility.analyze(MCGraph.prototype.removeVertex, graph, 3);
 
-// Test Search Pt. II
+// Test Search II
 Utility.analyze(MCGraph.prototype.breadthFirstSearch, graph, 1, 3);
 Utility.analyze(MCGraph.prototype.depthFirstSearch, graph, 1, 3);
 
 // Test Edge Removal
 Utility.analyze(MCGraph.prototype.removeEdge, graph, 1, 2);
 
-// Test Search Pt. III
+// Test Search III
 Utility.analyze(MCGraph.prototype.breadthFirstSearch, graph, 1, 3);
 Utility.analyze(MCGraph.prototype.depthFirstSearch, graph, 1, 3);

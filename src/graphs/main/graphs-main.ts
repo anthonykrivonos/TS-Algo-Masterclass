@@ -41,16 +41,14 @@ export class MCGraph<T> {
 
       /**
       * Add Edge
-      * TODO: - Test
-      * - Adds a vertex to the graph.
+      * - Adds an edge to the graph.
       * @param from One vertex to create the edge from.
       * @param to One vertex to create the edge to.
       * @returns True if the edge was added, false otherwise.
       */
       public addEdge(from:T, to:T):boolean {
-            if (this.adjacencyMap.has(from) && !this.adjacencyMap.get(from)!.includes(to) && this.adjacencyMap.has(to) && !this.adjacencyMap.get(to)!.includes(from)) {
+            if (this.adjacencyMap.has(from) && this.adjacencyMap.has(to) && !this.adjacencyMap.get(from)!.includes(to)) {
                   this.adjacencyMap.get(from)!.push(to);
-                  this.adjacencyMap.get(to)!.push(from);
                   return true;
             }
             return false;
@@ -58,7 +56,6 @@ export class MCGraph<T> {
 
       /**
       * Remove Vertex
-      * TODO: - Test
       * - Removes a vertex from the graph.
       * - Removes all edges connected to other vertices.
       * @param vertex Vertex to add.
@@ -81,18 +78,15 @@ export class MCGraph<T> {
 
       /**
       * Remove Edge
-      * TODO: - Test
       * - Removes an edge from the graph.
       * @param from One vertex to remove the edge from.
       * @param to One vertex to remove the edge to.
       * @returns True if the edge was removed, false otherwise.
       */
       public removeEdge(from:T, to:T):boolean {
-            if (this.adjacencyMap.has(from) && this.adjacencyMap.get(from)!.includes(to) && this.adjacencyMap.has(to) && this.adjacencyMap.get(to)!.includes(from)) {
+            if (this.adjacencyMap.has(from) && this.adjacencyMap.get(from)!.includes(to)) {
                   let indexOfTo = this.adjacencyMap.get(from)!.indexOf(to);
-                  let indexOfFrom = this.adjacencyMap.get(to)!.indexOf(from);
                   this.adjacencyMap.get(from)!.splice(indexOfTo, 1);
-                  this.adjacencyMap.get(to)!.splice(indexOfFrom, 1);
                   return true;
             }
             return false;
@@ -100,7 +94,6 @@ export class MCGraph<T> {
 
       /**
       * Breadth First Traversal
-      * TODO: - Test
       * - O(n^2)
       * - Search each neighboring vertex.
       * - If not found, search the depth of each neighboring vertex.
@@ -110,26 +103,41 @@ export class MCGraph<T> {
       * @returns True if the vertex was found, false otherwise.
       */
       public breadthFirstSearch(from:T, find:T):boolean {
-            var visited = new MCArray();
-            var visit = new MCQueue();
+
+            // Keeps track of visited vertices
+            var visitMap = new MCMap();
+            this.adjacencyMap.keys().forEach((key:T) => {
+                  visitMap.set(key, false);
+            });
+
+            // Queue that keeps track of visited vertices
+            var visitQueue = new MCQueue<T>();
+
+            // Function that marks a vertex as visited
+            let visit = (vertex:T) => {
+                  visitQueue.add(vertex);
+                  visitMap.set(vertex, true);
+            }
 
             // Visit the from element
-            visited.push(from);
+            visit(from);
 
             // Recur while visit queue is non-empty
-            while (!visit.isEmpty()) {
-                  let currentVertex = visit.poll() as T;
+            while (!visitQueue.isEmpty()) {
 
-                  if (currentVertex === find) {
+                  // Take the last element from the visit queue
+                  let currentVertex = visitQueue.poll();
+
+                  // Return true if the vertex is found
+                  if (currentVertex == find) {
                         return true;
+                  } else {
+                        this.adjacencyMap.get(currentVertex!)!.forEach((vertex) => {
+                              if (!visitMap.get(vertex)) {
+                                    visit(vertex);
+                              }
+                        });
                   }
-
-                  this.adjacencyMap.get(currentVertex)!.forEach((vertex) => {
-                        if (!visited.includes(vertex)) {
-                              visited.push(vertex);
-                              visit.add(vertex);
-                        }
-                  });
             }
 
             return false;
@@ -137,7 +145,6 @@ export class MCGraph<T> {
 
       /**
       * Depth First Traversal
-      * TODO: - Test
       * - O(n^2)
       * - Search the deepest child of the current vertex.
       * - Recur to neighboring vertices.
@@ -149,30 +156,50 @@ export class MCGraph<T> {
 
             // Keeps track of visited vertices
             var visited = new MCMap();
-            Array.from(this.adjacencyMap.keys()).forEach((key:T) => {
+            this.adjacencyMap.keys().forEach((key:T) => {
                   visited.set(key, false);
             });
 
+            var found = false;
+
             // Helper function
-            let depthFirstTraversal = (vertex:T, goal:T):boolean => {
-                  if (vertex == goal) {
-                        return true;
-                  }
+            let depthFirstTraversal = (vertex:T, goal:T):void => {
 
                   // Visit the from element
                   visited.set(vertex, true);
 
-                  // Recur for every adjacent node
-                  for (var i = 0; i < this.adjacencyMap.get(vertex)!.length; i++) {
-                        let adjacentVertex = this.adjacencyMap.get(vertex)![i];
-                        if (!visited.get(adjacentVertex)) {
-                              return false || depthFirstTraversal(adjacentVertex, goal);
+                  if (vertex == goal) {
+                        // Set found to true and stop iteration
+                        found = true;
+                  } else {
+                        // Recur for every adjacent node
+                        let adjacencyList = this.adjacencyMap.get(vertex)!;
+                        for (var i = 0; i < adjacencyList.length; i++) {
+                              let adjacentVertex = adjacencyList[i];
+                              if (!visited.get(adjacentVertex)) {
+                                    depthFirstTraversal(adjacentVertex, goal);
+                              }
                         }
                   }
-                  return false;
             };
 
-            return depthFirstTraversal(from, find);
+            depthFirstTraversal(from, find);
+
+            return found;
+      }
+
+      /**
+      * To String
+      * - O(n)
+      * - Returns the graph as a string in neat format.
+      * @returns A string representation of the graph.
+      */
+      public toString():string {
+            var graphStringList = new MCArray<string>();
+            this.adjacencyMap.forEach((vertex:T, adjacencyList:MCArray<T>) => {
+                  graphStringList.push(`${vertex} => ${adjacencyList.join(', ')}`);
+            });
+            return graphStringList.length > 0 ? `( ${graphStringList.join("; ")} )` : "()";
       }
 
 }

@@ -288,6 +288,30 @@ export class MCMap<KeyType, ValueType> {
             return pairs;
       }
 
+      /**
+      * To String
+      * - O(n^2)
+      * - Returns the map as a string in neat format.
+      * @returns A string representation of the map.
+      */
+      public toString():string {
+            var mapStringList = new MCArray<string>();
+            this.forEach((key:KeyType, value:ValueType) => {
+                  mapStringList.push(`'${key}': ${value}`);
+            });
+            return mapStringList.length > 0 ? `{ ${mapStringList.join(", ")} }` : "{ }";
+      }
+
+      /**
+      * Parse
+      * - O(n)
+      * - Parses the map into an object literal.
+      * @returns The map as a parsed object literal.
+      */
+      public parse():object {
+            return JSON.parse(this.toString());
+      }
+
 }
 
 class MCMapNode<KeyType, ValueType> extends MCLinkedListNode<ValueType> {
