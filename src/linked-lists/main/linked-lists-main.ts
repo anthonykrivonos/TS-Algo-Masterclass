@@ -5,32 +5,48 @@
  * Linked Lists/Main
  */
 
+import { MCArray } from '../../arrays/main/arrays-main';
+
 /**
  * Masterclass linked list implementation.
  */
 export class MCLinkedList<T> {
 
-      private head:MCLinkedListNode<T>;
+      private head:MCLinkedListNode<T> | null;
 
       /**
        * Constructor
        * - Creates an MCMap from a regular map.
        * @param map Optional map to reconstruct.
        */
-      constructor(head:MCLinkedListNode<T>) {
+      constructor(head:MCLinkedListNode<T> | null = null) {
             this.head = head;
       }
 
       /**
+       * To Array
+       * - Converts the linked list into an array.
+       * @returns The linked list as an array.
+       */
+      public toArray():MCArray<T> {
+            var listArray = new MCArray<T>();
+            let node = this.head;
+            while (node) {
+                  listArray.push(node.getValue());
+                  node = node.getNext();
+            }
+            return listArray;
+      }
+
+      /**
        * Size
-       * TODO: - Test
        * - Get the size of the linked list.
        * @returns The size of the list.
        */
       public size():number {
             var size = 1;
             let node = this.head;
-            while (node.hasNext()) {
+            while (node && node.hasNext()) {
                   size++;
                   node = node.getNext()!;
             }
@@ -39,7 +55,6 @@ export class MCLinkedList<T> {
 
       /**
        * Size - Recursive
-       * TODO: - Test
        * - Get the size of the linked list.
        * @returns The size of the list.
        */
@@ -52,77 +67,70 @@ export class MCLinkedList<T> {
 
       /**
        * Insert
-       * TODO: - Test
        * - Inserts a node into the linked list at the specified position.
        * - Pushes the node if the index is invalid.
        * @param index Index to insert the node at.
        * @param node Node to insert into the list.
        */
       public insert(index:number, node:MCLinkedListNode<T>):void {
-            if (index >= this.size()) {
-                  this.push(node);
-            } else if (index > 0) {
+            if (index >= this.size() && this.head) {
+                  let currentNode = this.head;
+                  while (currentNode.getNext()) {
+                        currentNode = currentNode.getNext()!;
+                  }
+                  currentNode.setNext(node);
+            } else if (index > 0 && this.head) {
                   var i = 0;
                   let currentNode = this.head;
-                  while (i < index) {
+                  while (i < index - 1) {
                         i++;
                         currentNode = currentNode.getNext()!;
                   }
                   let tempNext = currentNode.getNext()!;
                   currentNode.setNext(node);
                   node.setNext(tempNext);
-            } else if (index == 0) {
+            } else {
                   let tempNext = this.head;
-                  node.setNext(this.head);
                   this.head = node;
+                  node.setNext(tempNext);
             }
       }
-
-
-      /**
-       * Push
-       * TODO: - Test
-       * - Pushes a node at the end of the linked list.
-       * @param node Node to insert into the list.
-       */
-      public push(node:MCLinkedListNode<T>):void {
-            let currentNode = this.head;
-            while (currentNode.hasNext()) {
-                  currentNode = currentNode.getNext()!;
-            }
-            currentNode.setNext(node);
-      }
-
-
 
       /**
        * Delete
-       * TODO: - Test
        * - Deletes the node at the specified index.
        * @param index Index from where to delete the node.
        * @returns The deleted node.
        */
       public delete(index:number):MCLinkedListNode<T> | null {
-            if (index === 0) {
-                  let newHead = this.head.getNext()!;
-                  this.head = newHead;
-            } else if (index < this.size() - 1) {
-                  var i = 0;
-                  var currentNode = this.head;
-                  while (i < index - 1) {
-                         currentNode = currentNode.getNext()!;
-                         i++;
+            if (this.head) {
+                  if (index === 0) {
+                        let oldHead = this.head;
+                        let newHead = this.head.getNext()!;
+                        this.head = newHead;
+                        return oldHead;
+                  } else if (index < this.size() - 1) {
+                        var i = 0;
+                        var currentNode = this.head;
+                        while (i < index - 1) {
+                               currentNode = currentNode.getNext()!;
+                               i++;
+                        }
+                        let nextNode = currentNode.getNext()!;
+                        let nextNextNode = currentNode.getNext()!.getNext()!;
+                        currentNode.setNext(nextNextNode);
+                        return nextNode;
+                  } else if (index === this.size() - 1) {
+                        var i = 0;
+                        var currentNode = this.head;
+                        while (i < this.size() - 1) {
+                              currentNode = currentNode.getNext()!;
+                              i++;
+                        }
+                        let nextNode = currentNode.getNext()!;
+                        currentNode.setNext(null);
+                        return nextNode;
                   }
-                  let nextNextNode = currentNode.getNext()!.getNext()!;
-                  currentNode.setNext(nextNextNode);
-            } else if (index === this.size() - 1) {
-                  var i = 0;
-                  var currentNode = this.head;
-                  while (i < this.size() - 1) {
-                        currentNode = currentNode.getNext()!;
-                        i++;
-                  }
-                  currentNode.setNext(null);
             }
             return null
       }
@@ -132,55 +140,60 @@ export class MCLinkedList<T> {
 /**
  * Masterclass linked list node.
  */
-export class MCLinkedListNode<T> {
+export class MCLinkedListNode<ValueType> {
 
-      private value:T;
-      private next:MCLinkedListNode<T> | null;
+      private value:ValueType;
+      private next:MCLinkedListNode<ValueType> | null;
 
       /**
        * Constructor
-       * TODO: - Test
-       * - Creates an MCMap from a regular map.
-       * @param map Optional map to reconstruct.
+       * - Creates a new linked list node.
+       * @param value Value of the node.
+       * @param next Next node in the list (optional).
        */
-      constructor(value:T, next:MCLinkedListNode<T> | null = null) {
+      constructor(value:ValueType, next:MCLinkedListNode<ValueType> | null = null) {
             this.value = value;
             this.next = next;
       }
 
       /**
        * Get Value
-       * TODO: - Test
        * - Gets the value of the node.
        * @returns Returns the value.
        */
-      public getValue():T {
+      public getValue():ValueType {
             return this.value;
       }
 
       /**
        * Get Next
-       * TODO: - Test
        * - Gets the next node.
        * @returns Returns the next node.
        */
-      public getNext():MCLinkedListNode<T> | null {
+      public getNext():MCLinkedListNode<ValueType> | null {
             return this.next;
       }
 
       /**
+       * Set Value
+       * - Sets the value of the node.
+       * @param value Value to set.
+       */
+      public setValue(value:ValueType):void {
+            this.value = value;
+      }
+
+      /**
        * Set Next
-       * TODO: - Test
        * - Sets the next node.
        * @param node Node to set the next node to.
        */
-      public setNext(node:MCLinkedListNode<T> | null):void {
+      public setNext(node:MCLinkedListNode<ValueType> | null):void {
             this.next = node;
       }
 
       /**
        * Has Next
-       * TODO: - Test
        * - Checks for the next node.
        * @returns Returns true if the linked list node has next node.
        */

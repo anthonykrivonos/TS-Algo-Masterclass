@@ -23,6 +23,7 @@ export class MCBinarySearchTree<T> extends MCBinaryTree<T> {
 
       /**
        * Insert
+       * TODO: - Test
        * - Inserts a value into the binary search tree.
        * @param value Value of the new node to insert.
        * @param node The node to start insertion from.
@@ -41,6 +42,7 @@ export class MCBinarySearchTree<T> extends MCBinaryTree<T> {
 
       /**
        * Find
+       * TODO: - Test
        * - Searches a binary search tree for the first instance of a given value.
        * @param value Value to search for.
        * @param node The node to start search from.
@@ -56,5 +58,7 @@ export class MCBinarySearchTree<T> extends MCBinaryTree<T> {
             }
             return this.find(value, node.right);
       }
+
+
 
 }

@@ -66,8 +66,8 @@ export class MCGraph<T> {
       */
       public removeVertex(vertex:T):boolean {
             if (this.adjacencyMap.has(vertex)) {
-                  this.adjacencyMap.delete(vertex);
-                  this.adjacencyMap.forEach((adjacencyList, adjacentVertex) => {
+                  this.adjacencyMap.remove(vertex);
+                  this.adjacencyMap.forEach((adjacentVertex, adjacencyList) => {
                         let indexOfVertex = adjacencyList.indexOf(vertex);
                         if (indexOfVertex > -1) {
                               adjacencyList.splice(indexOfVertex, 1);

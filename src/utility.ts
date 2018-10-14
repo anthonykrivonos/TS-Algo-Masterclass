@@ -20,11 +20,11 @@ export const PERCEPTION_THRESHOLD:number = 30;
  * - O(1 * (runtime of func))
  * - Analyzes and prints the runtime and return of a function on an object.
  */
-export function analyze(func:Function, forObject:Object | null = null, ...withParameters:any[]):void {
+export function analyze(func:Function, forObject:Object | null | void = null, ...withParameters:any[]):void {
       withParameters = withParameters === undefined ? [] : withParameters;
 
       let functionName = func.name;
-      let objectValue = forObject ? forObject.toString() : "";
+      let objectValue = forObject ? forObject.toLocaleString() : "";
 
       let startTime = new Date().getTime();
       let result = func.apply(forObject, withParameters);
@@ -36,8 +36,8 @@ export function analyze(func:Function, forObject:Object | null = null, ...withPa
 
       console.log(`
 ${timeIndicator} ${functionName} called${forObject != null ? ` on ❮ ${objectValue} ❯` : ""}
-  ⮑ Returned: ${result}
-  📣 Called ${withParameters.length > 0 ? `with argument${withParameters.join(",").length != 1 ? "s" : ""} ( ${withParameters.join(",")} )` : "with no arguments"}
+  ⮑ Returned${result != null ? `: ${result}` : ' nothing'}
+  📣 Called ${withParameters.length > 0 ? `with argument${withParameters.join(", ").length != 1 ? "s" : ""} ( ${withParameters.join(",")} )` : "with no arguments"}
   ⏳ Took ${durationS}s`);
 };
 
