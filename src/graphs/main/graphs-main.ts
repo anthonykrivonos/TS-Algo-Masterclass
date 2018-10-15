@@ -10,7 +10,7 @@ import { MCMap } from "../../maps/main/maps-main";
 import { MCQueue } from "../../queues/main/queues-main";
 
 /**
-* Masterclass graph implementation.
+* Masterclass directed graph implementation.
 */
 export class MCGraph<T> {
 
@@ -247,6 +247,75 @@ export class MCGraph<T> {
       }
 
       /**
+      * Get Connected Subgraphs
+      * - // TODO: - Test
+      * - O(n^4)
+      * - Greedy method that gets a list of connected subgraphs of the given graph.
+      * - If the entire graph is connected, it returns a list containing the graph, itself.
+      * @returns A list of connected subgraphs.
+      */
+      public getConnectedSubgraphs():MCArray<MCGraph<T>> {
+
+            // Store all keys in an array
+            let keys = this.adjacencyMap.keys();
+
+            // Iterative function that generates connected subgraphs
+            // O(n^2)
+            let getSubgraphFromVertex = (vertex:T, graph:MCGraph<T>):void => {
+
+                  // Add the vertex to the new graph
+                  graph.addVertex(vertex);
+
+                  // Loop through adjacent vertices and add them to the graph
+                  this.adjacencyMap.get(vertex)!.forEach((adjacentVertex) => {
+                        graph.addVertex(adjacentVertex);
+                        graph.addEdge(vertex, adjacentVertex);
+                  });
+
+                  // Loop through all other vertices' adjacency lists
+                  for (var i = 0; i < keys.length; i++) {
+                        if (keys[i] != vertex) {
+                              let adjacencyList = this.adjacencyMap.get(keys[i])!;
+                              adjacencyList.forEach((adjacentVertex) => {
+                                    if (adjacentVertex == vertex) {
+                                          graph.addVertex(keys[i]);
+                                          graph.addEdge(keys[i], vertex);
+                                    }
+                              });
+                        }
+                  }
+
+            };
+
+            // Store unique subgraphs here
+            var subgraphs = new MCArray<MCGraph<T>>();
+
+            // O(n^3)
+            for (var i = 0; i < keys.length; i++) {
+                  let vertex = keys[i];
+                  var subgraph = new MCGraph<T>();
+
+                  // O(n^2)
+                  getSubgraphFromVertex(vertex, subgraph);
+
+                  var isUnique = true;
+                  for (var j = 0; j < subgraphs.length; j++) {
+                        // O(n^2)
+                        if (subgraphs[j].equals(subgraph)) {
+                              isUnique = false;
+                              break;
+                        }
+                  }
+                  if (isUnique) {
+                        // Push the unique graph to the list
+                        subgraphs.push(subgraph);
+                  }
+            }
+
+            return subgraphs;
+      }
+
+      /**
       * To String
       * - O(n)
       * - Returns the graph as a string in neat format.
@@ -258,6 +327,17 @@ export class MCGraph<T> {
                   graphStringList.push(`${vertex} => ${adjacencyList.join(', ')}`);
             });
             return graphStringList.length > 0 ? `( ${graphStringList.join("; ")} )` : "()";
+      }
+
+      /**
+      * Equals
+      * - O(n)
+      * - Checks to see if the graph is equal to another graph.
+      * @param otherGraph Other graph to test equality with.
+      * @returns True if the graph is equal to the other graph, false otherwise.
+      */
+      public equals(otherGraph:MCGraph<T>):boolean {
+            return this.adjacencyMap.equals(otherGraph.adjacencyMap);
       }
 
 }

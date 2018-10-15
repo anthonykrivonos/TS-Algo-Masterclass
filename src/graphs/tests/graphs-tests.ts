@@ -15,7 +15,7 @@ let weightedGraph = new MCWeightedGraph();
 // Call Tests
 console.log(`🔎 Calling MCGraph Tests`);
 
-// Test Vertex Adding
+// Test Vertex Adding I
 Utility.analyze(MCGraph.prototype.addVertex, graph, 1);
 Utility.analyze(MCGraph.prototype.addVertex, graph, 2);
 Utility.analyze(MCGraph.prototype.addVertex, graph, 3);
@@ -51,3 +51,16 @@ Utility.analyze(MCGraph.prototype.removeEdge, graph, 1, 2);
 // Test Search III
 Utility.analyze(MCGraph.prototype.breadthFirstSearch, graph, 1, 3);
 Utility.analyze(MCGraph.prototype.depthFirstSearch, graph, 1, 3);
+
+// Test Vertex Adding II
+Utility.analyze(MCGraph.prototype.addVertex, graph, 4);
+Utility.analyze(MCGraph.prototype.addVertex, graph, 5);
+Utility.analyze(MCGraph.prototype.addVertex, graph, 6);
+
+// Test Edge Adding III
+Utility.analyze(MCGraph.prototype.addEdge, graph, 1, 2);
+Utility.analyze(MCGraph.prototype.addEdge, graph, 2, 1);
+Utility.analyze(MCGraph.prototype.addEdge, graph, 4, 5);
+
+// Test Connected Subgraphs
+Utility.analyze(MCGraph.prototype.getConnectedSubgraphs, graph);

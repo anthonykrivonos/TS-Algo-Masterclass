@@ -236,6 +236,17 @@ export class MCMap<KeyType, ValueType> {
       }
 
       /**
+       * Equals
+       * - O(n)
+       * - Checks to see if this map is equal to another map.
+       * @param otherMap Another map to test equality for.
+       * @returns True if equal, false otherwise.
+       */
+      public equals(otherMap:MCMap<KeyType, ValueType>):boolean {
+            return this.toArray().equals(otherMap.toArray());
+      }
+
+      /**
        * For Each
        * - Iterates through the map and calls the callback function with 'key' and 'value' as parameters.
        * @param callback A function with header (key:KeyType, value:ValueType):void.

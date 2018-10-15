@@ -80,6 +80,51 @@ export class MCArray<T> extends Array<T> {
             }
       }
 
+
+      /**
+       * Get Unique
+       * - O(n^2)
+       * - Returns a new MCArray with only unique elements.
+       * @returns A new MCArray with unique elements.
+       */
+      public getUnique():MCArray<T> {
+            var uniqueArray = this.copy();
+            uniqueArray.filter((value:T, index:number) => uniqueArray.indexOf(value) === index );
+            return uniqueArray;
+      }
+
+
+      /**
+       * Equals
+       * - TODO: - Test
+       * - O(n)
+       * - Returns a new MCArray with only unique elements.
+       * @returns A new MCArray with unique elements.
+       */
+      public equals(otherArray:MCArray<T>):boolean {
+
+            if (this.length != otherArray.length) {
+                  return false;
+            }
+
+            for (var i = 0; i < this.length; i++) {
+                  if (this[i] instanceof MCArray && otherArray[i] instanceof MCArray) {
+
+                        let thisMCArray = this[i] as any as MCArray<T>;
+                        let otherMCArray = otherArray[i] as any as MCArray<T>;
+
+                        if (!thisMCArray.equals(otherMCArray)) {
+                              return false;
+                        }
+
+                  } else if (this[i] != otherArray[i]) {
+                        return false;
+                  }
+            }
+
+            return true;
+      }
+
       /**
        * Swap
        * - Swap two elements in an array.
