@@ -248,10 +248,10 @@ export class MCGraph<T> {
 
       /**
       * Get Connected Subgraphs
-      * - // TODO: - Test
-      * - O(n^4)
-      * - Greedy method that gets a list of connected subgraphs of the given graph.
+      * - O(n^3)
+      * - Gets a list of connected subgraphs of the given graph.
       * - If the entire graph is connected, it returns a list containing the graph, itself.
+      * - If a vertex is
       * @returns A list of connected subgraphs.
       */
       public getConnectedSubgraphs():MCArray<MCGraph<T>> {
@@ -269,38 +269,55 @@ export class MCGraph<T> {
                   // The subgraph to create
                   var graph = new MCGraph<T>();
 
-                  // Map for checking vertices found in graph
-                  var verticesInGraph = new MCMap<T, boolean>();
+                  // Map indicating whether vertices have been recursively added to the graph
+                  var recursivelyCheckedMap = new MCMap<T, boolean>();
+
+                  // Function that recursively adds edges between vertices in the subgraph
+                  let recursiveAdd = (v:T) => {
+
+                        // Add v to the graph
+                        graph.addVertex(v);
+
+                        // Mark from as checked
+                        recursivelyCheckedMap.set(v, true);
+
+                        // Loop through adjacent vertices
+                        let adjacencyList = this.adjacencyMap.get(v)!;
+                        for (var i = 0; i < adjacencyList.length; i++) {
+
+                              // Store the adjacent vertex in to
+                              let to = adjacencyList[i];
+
+                              // Add an edge between v and to
+                              graph.addVertex(to);
+                              graph.addEdge(v, to);
+
+                              // Mark both v and to as used - for uniqueness of solution
+                              usedVertices.set(v, true);
+                              usedVertices.set(to, true);
+
+                              // If to has not been recursively checked, do it
+                              if (!recursivelyCheckedMap.has(to)) {
+                                    recursiveAdd(to);
+                              }
+                        }
+
+                  }
 
                   // Add the vertex to the new graph
-                  graph.addVertex(vertex);
-                  usedVertices.set(vertex, true);
-                  verticesInGraph.set(vertex, true);
-
-                  // Loop through adjacent vertices and add them to the graph (O(n))
-                  this.adjacencyMap.get(vertex)!.forEach((adjacentVertex) => {
-                        graph.addVertex(adjacentVertex);
-                        graph.addEdge(vertex, adjacentVertex);
-                        usedVertices.set(adjacentVertex, true);
-                        verticesInGraph.set(adjacentVertex, true);
-                  });
+                  // O(n^2)
+                  recursiveAdd(vertex);
 
                   // Loop through all other vertices' adjacency lists
                   // O(n^2)
                   for (var i = 0; i < keys.length; i++) {
-                        // Assure the key is not the vertex that's already been checked
+                        // If the graph has the given vertex, add all of its adjacent vertices to the graph
                         if (keys[i] != vertex) {
                               // Get the adjacency list of the vertex
                               let adjacencyList = this.adjacencyMap.get(keys[i])!;
-
-                              // Push the vertex and edge if an adjacent vertex is found.
-                              adjacencyList.forEach((adjacentVertex) => {
-                                    if (verticesInGraph.has(adjacentVertex)) {
-                                          graph.addVertex(keys[i]);
-                                          usedVertices.set(keys[i], true);
-                                          graph.addEdge(keys[i], adjacentVertex);
-                                    }
-                              });
+                              if (adjacencyList.includes(vertex)) {
+                                    recursiveAdd(keys[i]);
+                              }
                         }
                   }
 
