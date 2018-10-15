@@ -259,32 +259,52 @@ export class MCGraph<T> {
             // Store all keys in an array
             let keys = this.adjacencyMap.keys();
 
+            // Map of vertices used in subgraphs to ensure uniqueness
+            var usedVertices = new MCMap<T, boolean>();
+
             // Iterative function that generates connected subgraphs
             // O(n^2)
-            let getSubgraphFromVertex = (vertex:T, graph:MCGraph<T>):void => {
+            let getSubgraphFromVertex = (vertex:T):MCGraph<T> => {
+
+                  // The subgraph to create
+                  var graph = new MCGraph<T>();
+
+                  // Map for checking vertices found in graph
+                  var verticesInGraph = new MCMap<T, boolean>();
 
                   // Add the vertex to the new graph
                   graph.addVertex(vertex);
+                  usedVertices.set(vertex, true);
+                  verticesInGraph.set(vertex, true);
 
-                  // Loop through adjacent vertices and add them to the graph
+                  // Loop through adjacent vertices and add them to the graph (O(n))
                   this.adjacencyMap.get(vertex)!.forEach((adjacentVertex) => {
                         graph.addVertex(adjacentVertex);
                         graph.addEdge(vertex, adjacentVertex);
+                        usedVertices.set(adjacentVertex, true);
+                        verticesInGraph.set(adjacentVertex, true);
                   });
 
                   // Loop through all other vertices' adjacency lists
+                  // O(n^2)
                   for (var i = 0; i < keys.length; i++) {
+                        // Assure the key is not the vertex that's already been checked
                         if (keys[i] != vertex) {
+                              // Get the adjacency list of the vertex
                               let adjacencyList = this.adjacencyMap.get(keys[i])!;
+
+                              // Push the vertex and edge if an adjacent vertex is found.
                               adjacencyList.forEach((adjacentVertex) => {
-                                    if (adjacentVertex == vertex) {
+                                    if (verticesInGraph.has(adjacentVertex)) {
                                           graph.addVertex(keys[i]);
-                                          graph.addEdge(keys[i], vertex);
+                                          usedVertices.set(keys[i], true);
+                                          graph.addEdge(keys[i], adjacentVertex);
                                     }
                               });
                         }
                   }
 
+                  return graph;
             };
 
             // Store unique subgraphs here
@@ -293,22 +313,11 @@ export class MCGraph<T> {
             // O(n^3)
             for (var i = 0; i < keys.length; i++) {
                   let vertex = keys[i];
-                  var subgraph = new MCGraph<T>();
 
-                  // O(n^2)
-                  getSubgraphFromVertex(vertex, subgraph);
-
-                  var isUnique = true;
-                  for (var j = 0; j < subgraphs.length; j++) {
-                        // O(n^2)
-                        if (subgraphs[j].equals(subgraph)) {
-                              isUnique = false;
-                              break;
-                        }
-                  }
-                  if (isUnique) {
+                  // Check uniqueness
+                  if (!usedVertices.has(vertex)) {
                         // Push the unique graph to the list
-                        subgraphs.push(subgraph);
+                        subgraphs.push(getSubgraphFromVertex(vertex));
                   }
             }
 

@@ -61,6 +61,8 @@ Utility.analyze(MCGraph.prototype.addVertex, graph, 6);
 Utility.analyze(MCGraph.prototype.addEdge, graph, 1, 2);
 Utility.analyze(MCGraph.prototype.addEdge, graph, 2, 1);
 Utility.analyze(MCGraph.prototype.addEdge, graph, 4, 5);
+Utility.analyze(MCGraph.prototype.addEdge, graph, 4, 2);
+Utility.analyze(MCGraph.prototype.addEdge, graph, 4, 1);
 
 // Test Connected Subgraphs
 Utility.analyze(MCGraph.prototype.getConnectedSubgraphs, graph);
