@@ -257,7 +257,7 @@ export class MCGraph<T> {
       public getConnectedSubgraphs():MCArray<MCGraph<T>> {
 
             // Store all keys in an array
-            let keys = this.adjacencyMap.keys();
+            let vertices = this.adjacencyMap.keys();
 
             // Map of vertices used in subgraphs to ensure uniqueness
             var usedVertices = new MCMap<T, boolean>();
@@ -310,13 +310,13 @@ export class MCGraph<T> {
 
                   // Loop through all other vertices' adjacency lists
                   // O(n^2)
-                  for (var i = 0; i < keys.length; i++) {
+                  for (var i = 0; i < vertices.length; i++) {
                         // If the graph has the given vertex, add all of its adjacent vertices to the graph
-                        if (keys[i] != vertex) {
+                        if (vertices[i] != vertex) {
                               // Get the adjacency list of the vertex
-                              let adjacencyList = this.adjacencyMap.get(keys[i])!;
+                              let adjacencyList = this.adjacencyMap.get(vertices[i])!;
                               if (adjacencyList.includes(vertex)) {
-                                    recursiveAdd(keys[i]);
+                                    recursiveAdd(vertices[i]);
                               }
                         }
                   }
@@ -328,8 +328,8 @@ export class MCGraph<T> {
             var subgraphs = new MCArray<MCGraph<T>>();
 
             // O(n^3)
-            for (var i = 0; i < keys.length; i++) {
-                  let vertex = keys[i];
+            for (var i = 0; i < vertices.length; i++) {
+                  let vertex = vertices[i];
 
                   // Check uniqueness
                   if (!usedVertices.has(vertex)) {
