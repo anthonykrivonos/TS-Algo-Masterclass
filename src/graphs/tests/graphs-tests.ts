@@ -108,5 +108,8 @@ Utility.analyze(MCWeightedGraph.prototype.addUndirectedEdge, weightedGraph, 3, 5
 Utility.analyze(MCWeightedGraph.prototype.addUndirectedEdge, weightedGraph, 4, 6, 1);
 Utility.analyze(MCWeightedGraph.prototype.addUndirectedEdge, weightedGraph, 5, 6, 8);
 
+// Test Check for Cycles I
+Utility.analyze(MCWeightedGraph.prototype.isCyclicUF, weightedGraph);
+
 // Test Kruskal's Minimum Spanning Tree
-Utility.analyze(MCWeightedGraph.prototype.kruskalTree, weightedGraph);
+Utility.analyze(MCWeightedGraph.prototype.getKruskalTree, weightedGraph);

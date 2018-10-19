@@ -58,6 +58,27 @@ export class MCWeightedGraph<T> {
       }
 
       /**
+      * Get Edge
+      * O(n)
+      * - Gets the edge between two vertices.
+      * @param from The vertex the edge starts from.
+      * @param to The vertex the edge ends at.
+      * @returns The edge between these two vertices or null.
+      */
+      public getEdge(from:T, to:T):MCWeightedEdge<T> | null {
+            if (this.adjacencyWeightedMap.has(from)) {
+                  let adjacencyList = this.adjacencyWeightedMap.get(from)!;
+                  for (var i = 0; i < adjacencyList.length; i++) {
+                        let edge = adjacencyList[i];
+                        if (edge.to === to) {
+                              return edge;
+                        }
+                  }
+            }
+            return null;
+      }
+
+      /**
       * Add UndirectedEdge
       * - Adds a weighted edge to the graph in two directions.
       * @param vertexA One vertex to create the edge from.
@@ -230,78 +251,127 @@ export class MCWeightedGraph<T> {
             return found;
       }
 
-
-      public find(parent:MCMap<T, MCWeightedEdge<T>>, vertex:T):T {
-            if (!parent.has(vertex)) {
-                  return vertex;
-            }
-            return this.find(parent, parent.get(vertex)!.to);
-      }
-
       /**
       * Is Cyclic (Union-Find)
       * - O(n^2)
       * - Checks to see if the graph contains cycles.
       * @returns True if a cycle is found, false otherwise.
       */
-      // public isCyclicUF():boolean {
-      //       var parent = new MCMap<T, MCWeightedEdge<T>>();
-      //       let edges = this.adjacencyWeightedMap.values().flattened();
-      //
-      //       edges.forEach((edge) => {
-      //             let firstFind = this.find(parent, edge.from);
-      //             let secondFind = this.find(parent, edge.to);
-      //
-      //
-      //       });
-      //
-      // }
+      public isCyclicUF():boolean {
+            var parent = new MCMap<T, MCWeightedEdge<T>>();
+            let edges = this.adjacencyWeightedMap.values().flattened();
 
-      public kruskalTree():MCWeightedGraph<T> {
+            console.log(edges);
+
+            for (var i = 0; i < edges.length; i++) {
+                  let edge = edges[i];
+
+                  let firstFind = this.find(parent, edge.from);
+                  let secondFind = this.find(parent, edge.to);
+
+                  if (firstFind == secondFind) {
+                        return true;
+                  }
+
+                  this.union(parent, firstFind, secondFind);
+            }
+
+            return false;
+      }
+
+      /**
+      * Get Kruskal Tree
+      * - O(|E| + |V|)
+      * - Returns the minimum spanning tree from the graph using Kruskal's Algorithm.
+      * - The graph must be unweighted, or an undesired solution will be given.
+      * @returns The minimum spanning tree for the MCGraph.
+      */
+      public getKruskalTree():MCWeightedGraph<T> {
 
             // Create a new graph (minimum spanning tree) with the given vertices, but no edges: O(n)
             var minSpanTree = new MCWeightedGraph<T>();
             this.adjacencyWeightedMap.keys().forEach((vertex) => minSpanTree.addVertex(vertex));
 
+            // Parent map to keep track of union-find chains amongst the vertices to remove cycles
+            var parent = new MCMap<T, MCWeightedEdge<T>>();
+
             // Create a set of the graph's edges: O(n^2)
-            var edgeSet = new MCArray<MCWeightedEdge<T>>();
-            this.adjacencyWeightedMap.values().forEach((edges:MCArray<MCWeightedEdge<T>>) => {
-                  edges.forEach((edge) => edgeSet.push(edge));
-            });
+            var edgeSet = this.adjacencyWeightedMap.values().flattened();
 
             // Sort the edges by weight
             edgeSet.sort((edgeA, edgeB) => edgeA.weight - edgeB.weight);
 
             // Add the minimum weight edge to the graph: O(n^2)
             while (!edgeSet.isEmpty()) {
-
                   // Pop the minimum edge from the front of the edge set
                   let minEdge = edgeSet.shift()!;
 
-                  // Get the adjacency list of one of the vertices
-                  let adjacencyList = minSpanTree.adjacencyWeightedMap.get(minEdge.from)!;
-
-                  // Check if the adjacency list for one of the vertices has the given edge: O(n)
-                  var includesEdge = false;
-                  for (var i = 0; i < adjacencyList.length; i++) {
-                        if ( (adjacencyList[i].from == minEdge.from || adjacencyList[i].from == minEdge.to) &&
-                             (adjacencyList[i].to == minEdge.to || adjacencyList[i].to == minEdge.from) &&
-                              adjacencyList[i].weight == minEdge.weight) {
-                              includesEdge = true;
-                              break;
-                        }
-                  }
-
-                  // Add the undirected edge to the new graph: O(1)
-                  if (!includesEdge) {
+                  // If the source and destination of the edge dont share a chain, add the edge to the min spanning tree
+                  if (minSpanTree.find(parent, minEdge.from) != this.find(parent, minEdge.to)) {
                         minSpanTree.addUndirectedEdge(minEdge.from, minEdge.to, minEdge.weight);
-                  }
 
+                        // Add the minEdge vertices to the parent map
+                        minSpanTree.union(parent, minEdge.from, minEdge.to);
+                  }
             }
 
             // Return the generated minimum spanning tree
             return minSpanTree;
       }
+
+      /**
+      * Get Prim Tree
+      * - O(|E| + |V|)
+      * - Returns the minimum spanning tree from the graph using Prim's Algorithm.
+      * - The graph must be unweighted, or an undesired solution will be given.
+      * - 1. Initialize a tree with a single vertex, chosen arbitrarily from the graph.
+      * - 2. Grow the tree by one edge: of the edges that connect the tree to vertices not yet in the tree, find the minimum-weight edge, and transfer it to the tree. Repeat until all vertices are in the tree.
+      * @returns The minimum spanning tree for the MCGraph.
+      */
+      // public getPrimTree():MCWeightedGraph<T> {
+      // 
+      //       // Create a new graph (minimum spanning tree) with the given vertices, but no edges: O(n)
+      //       var minSpanTree = new MCWeightedGraph<T>();
+      //
+      //       // List of required vertices
+      //       let necVertices:MCArray<T> = this.adjacencyWeightedMap.keys();
+      //
+      //       // Create a set of the graph's edges: O(n^2)
+      //       var edgeSet = this.adjacencyWeightedMap.values().flattened()!;
+      //
+      //       // If edges and vertices exist
+      //       if (edgeSet.length > 0 && necVertices.length > 0) {
+      //
+      //             // Sort the edges by weight
+      //             edgeSet.sort((edgeA, edgeB) => edgeA.weight - edgeB.weight);
+      //
+      //             // Get the minimum edge in the set
+      //             var minEdge = edgeSet.shift()!;
+      //             minSpanTree.addEdge(minEdge.to, minEdge.from, minEdge.weight);
+      //
+      //             var vertex = minEdge.to;
+      //             necVertices.splice(necVertices.indexOf(vertex), 1);
+      //             vertex = minEdge.from;
+      //             necVertices.splice(necVertices.indexOf(vertex), 1);
+      //
+      //             while (!necVertices.isEmpty()) {
+      //
+      //                   vertex = necVertices.shift()!;
+      //
+      //                   minSpanTree.addVertex(vertex);
+      //
+      //                   var adjacencyList = this.adjacencyWeightedMap.get(vertex)!;
+      //                   if (adjacencyList.length > 0) {
+      //                         adjacencyList.sort((edgeA, edgeB) => edgeA.weight - edgeB.weight);
+      //                         minEdge = adjacencyList.shift();
+      //
+      //                   }
+      //             }
+      //       }
+      //
+      //       // Return the generated minimum spanning tree
+      //       return minSpanTree;
+      // }
 
       /**
       * To String
@@ -315,6 +385,43 @@ export class MCWeightedGraph<T> {
                   graphStringList.push(`${vertex} => ${weightedAdjacencyList.map((weightedEdge:MCWeightedEdge<T>) => `${weightedEdge.to}{${weightedEdge.weight}}`).join(', ')}`);
             });
             return graphStringList.length > 0 ? `( ${graphStringList.join("; ")} )` : "()";
+      }
+
+      // Private Methods
+
+      /**
+      * Find
+      * - Used for union-find algorithm.
+      * - Finds the deepest edge for some vertex.
+      * @param parent Map of vertices to their subsequent edges.
+      * @param vertex Vertex to find.
+      * @returns The last vertex in the given vertex's chain.
+      */
+      private find(parent:MCMap<T, MCWeightedEdge<T>>, vertex:T):T {
+            if (!parent.has(vertex)) {
+                  return vertex;
+            }
+            return this.find(parent, parent.get(vertex)!.to);
+      }
+
+      /**
+      * Union
+      * - O(n)
+      * - Used for union-find algorithm.
+      * - Possibly adds the edge between two vertices to the parent map.
+      * @param parent Map of vertices to their subsequent edges.
+      * @param vertexA First vertex to join.
+      * @param vertexB Second vertex to join.
+      */
+      private union(parent:MCMap<T, MCWeightedEdge<T>>, vertexA:T, vertexB:T):void {
+            let findEdgeA = this.find(parent, vertexA);
+            let findEdgeB = this.find(parent, vertexB);
+            if (findEdgeA != findEdgeB) {
+                  let edge = this.getEdge(vertexA, vertexB);
+                  if (edge != null) {
+                        parent.set(vertexA, edge);
+                  }
+            }
       }
 
 }

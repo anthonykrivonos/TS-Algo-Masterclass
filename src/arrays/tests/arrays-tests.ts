@@ -10,6 +10,8 @@ import { MCArray } from '../main/arrays-main';
 
 let arrToSort = new MCArray(1, 3, 6, 2, 4, 8, 5, 9, 7);
 
+let arrToFlatten = new MCArray([1, 4, 6], [2], [5], [3, 7, 8]);
+
 let arrayUnionA = new MCArray(1, 3, 8, 5, 7);
 
 let arrayUnionB = new MCArray(8, 6, 5, 4, 2, 1, 0);
@@ -58,3 +60,6 @@ Utility.analyze(MCArray.prototype.fibonacciSearch, arrToSort.copy().mergeSort(),
 
 // Test Array Union
 Utility.analyze(MCArray.prototype.union, arrayUnionA, arrayUnionB);
+
+// Test Array Flatten
+Utility.analyze(MCArray.prototype.flattened, arrToFlatten);
