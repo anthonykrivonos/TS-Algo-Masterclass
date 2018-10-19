@@ -10,6 +10,10 @@ import { MCArray } from '../main/arrays-main';
 
 let arrToSort = new MCArray(1, 3, 6, 2, 4, 8, 5, 9, 7);
 
+let arrayUnionA = new MCArray(1, 3, 8, 5, 7);
+
+let arrayUnionB = new MCArray(8, 6, 5, 4, 2, 1, 0);
+
 // Call Tests
 console.log(`🔎 Calling MCArray Tests`);
 
@@ -51,3 +55,6 @@ Utility.analyze(MCArray.prototype.exponentialSearch, arrToSort.copy().mergeSort(
 
 // Test Fibonacci Search for 4
 Utility.analyze(MCArray.prototype.fibonacciSearch, arrToSort.copy().mergeSort(), 4);
+
+// Test Array Union
+Utility.analyze(MCArray.prototype.union, arrayUnionA, arrayUnionB);

@@ -189,12 +189,12 @@ export class MCGraph<T> {
       }
 
       /**
-      * Is Cyclic
+      * Is Cyclic (Non-Union-Find)
       * - O(n^2)
       * - Checks to see if the graph contains cycles.
       * @returns True if a cycle is found, false otherwise.
       */
-      public isCyclic():boolean {
+      public isCyclicNUF():boolean {
 
             // Constants to keep track of visits and recurrences in the map
             let VISIT_KEY:string = "visited";

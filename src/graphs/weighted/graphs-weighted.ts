@@ -58,6 +58,27 @@ export class MCWeightedGraph<T> {
       }
 
       /**
+      * Add UndirectedEdge
+      * - Adds a weighted edge to the graph in two directions.
+      * @param vertexA One vertex to create the edge from.
+      * @param vertexB One vertex to create the edge to.
+      * @param weight The weight of the edge.
+      * @returns True if the edge was added, false otherwise.
+      */
+      public addUndirectedEdge(vertexA:T, vertexB:T, weight:number):boolean {
+            let weightedEdgeA = new MCWeightedEdge(vertexA, vertexB, weight);
+            let weightedEdgeB = new MCWeightedEdge(vertexB, vertexA, weight);
+
+            if (this.adjacencyWeightedMap.has(vertexA) && this.adjacencyWeightedMap.has(vertexB) && !this.adjacencyWeightedMap.get(vertexA)!.includes(weightedEdgeA) &&
+            !this.adjacencyWeightedMap.get(vertexB)!.includes(weightedEdgeB)) {
+                  this.adjacencyWeightedMap.get(vertexA)!.push(weightedEdgeA);
+                  this.adjacencyWeightedMap.get(vertexB)!.push(weightedEdgeB);
+                  return true;
+            }
+            return false;
+      }
+
+      /**
       * Remove Vertex
       * - Removes a vertex from the graph.
       * - Removes all edges connected to other vertices.
@@ -207,6 +228,79 @@ export class MCWeightedGraph<T> {
             depthFirstTraversal(from, find);
 
             return found;
+      }
+
+
+      public find(parent:MCMap<T, MCWeightedEdge<T>>, vertex:T):T {
+            if (!parent.has(vertex)) {
+                  return vertex;
+            }
+            return this.find(parent, parent.get(vertex)!.to);
+      }
+
+      /**
+      * Is Cyclic (Union-Find)
+      * - O(n^2)
+      * - Checks to see if the graph contains cycles.
+      * @returns True if a cycle is found, false otherwise.
+      */
+      // public isCyclicUF():boolean {
+      //       var parent = new MCMap<T, MCWeightedEdge<T>>();
+      //       let edges = this.adjacencyWeightedMap.values().flattened();
+      //
+      //       edges.forEach((edge) => {
+      //             let firstFind = this.find(parent, edge.from);
+      //             let secondFind = this.find(parent, edge.to);
+      //
+      //
+      //       });
+      //
+      // }
+
+      public kruskalTree():MCWeightedGraph<T> {
+
+            // Create a new graph (minimum spanning tree) with the given vertices, but no edges: O(n)
+            var minSpanTree = new MCWeightedGraph<T>();
+            this.adjacencyWeightedMap.keys().forEach((vertex) => minSpanTree.addVertex(vertex));
+
+            // Create a set of the graph's edges: O(n^2)
+            var edgeSet = new MCArray<MCWeightedEdge<T>>();
+            this.adjacencyWeightedMap.values().forEach((edges:MCArray<MCWeightedEdge<T>>) => {
+                  edges.forEach((edge) => edgeSet.push(edge));
+            });
+
+            // Sort the edges by weight
+            edgeSet.sort((edgeA, edgeB) => edgeA.weight - edgeB.weight);
+
+            // Add the minimum weight edge to the graph: O(n^2)
+            while (!edgeSet.isEmpty()) {
+
+                  // Pop the minimum edge from the front of the edge set
+                  let minEdge = edgeSet.shift()!;
+
+                  // Get the adjacency list of one of the vertices
+                  let adjacencyList = minSpanTree.adjacencyWeightedMap.get(minEdge.from)!;
+
+                  // Check if the adjacency list for one of the vertices has the given edge: O(n)
+                  var includesEdge = false;
+                  for (var i = 0; i < adjacencyList.length; i++) {
+                        if ( (adjacencyList[i].from == minEdge.from || adjacencyList[i].from == minEdge.to) &&
+                             (adjacencyList[i].to == minEdge.to || adjacencyList[i].to == minEdge.from) &&
+                              adjacencyList[i].weight == minEdge.weight) {
+                              includesEdge = true;
+                              break;
+                        }
+                  }
+
+                  // Add the undirected edge to the new graph: O(1)
+                  if (!includesEdge) {
+                        minSpanTree.addUndirectedEdge(minEdge.from, minEdge.to, minEdge.weight);
+                  }
+
+            }
+
+            // Return the generated minimum spanning tree
+            return minSpanTree;
       }
 
       /**

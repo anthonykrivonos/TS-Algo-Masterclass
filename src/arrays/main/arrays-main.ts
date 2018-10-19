@@ -649,4 +649,94 @@ export class MCArray<T> extends Array<T> {
             return -1;
       }
 
+      /**
+       * Union
+       * - O(n)
+       * - Forms the union of two set arrays, joining the two arrays and removing duplicates.
+       * @return The union of two arrays.
+       */
+      public union(other:MCArray<T>):MCArray<T> {
+            let set = this.copy();
+
+            // Sort arrays
+            set.sort();
+            other.sort();
+
+            // Instantiate new union array
+            var union = new MCArray<T>();
+
+            // Loop through both arrays and push unique values
+            var i = 0;
+            var j = 0;
+            var previous = null;
+            while (i < set.length && j < other.length) {
+                  if (set[i] == other[j]) {
+                        if (set[i] != previous) {
+                              union.push(set[i]);
+                        }
+                        i++;
+                        j++;
+                  } else if (set[i] < other[j]) {
+                        if (set[i] != previous) {
+                              union.push(set[i]);
+                        }
+                        i++;
+                  } else {
+                        if (other[j] != previous) {
+                              union.push(other[j]);
+                        }
+                        j++;
+                  }
+                  previous = union.length > 0 ? union[union.length - 1] : null;
+            }
+
+            // Fill with set
+            while (i < set.length) {
+                  if (set[i] != previous) {
+                        union.push(set[i]);
+                  }
+                  i++;
+                  previous = union.length > 0 ? union[union.length - 1] : null;
+            }
+
+
+            // Fill with other
+            while (j < other.length) {
+                  if (other[j] != previous) {
+                        union.push(other[j]);
+                  }
+                  j++;
+                  previous = union.length > 0 ? union[union.length - 1] : null;
+            }
+
+            return union;
+      }
+
+      /**
+       * Flattened
+       * - O(n^2)
+       * - Recursively flattens an array of arrays into a flat array.
+       * @return The flattened array.
+       */
+      public flattened():MCArray<any> {
+            var flattened = new MCArray<any>();
+
+            this.copy().forEach((element:any) => {
+                  if (element instanceof MCArray) {
+                        // Found an MCArray as an element
+                        flattened.push(...element.flattened());
+                  } else if (Array.isArray(element)) {
+                        // Found a regular array as an element
+                        let elementAsMCArray = new MCArray<any>();
+                        element.forEach((el) => elementAsMCArray.push(el));
+                        flattened.push(...elementAsMCArray.flattened());
+                  } else {
+                        // Found a non-array as an element
+                        flattened.push(element);
+                  }
+            });
+
+            return flattened;
+      }
+
 }
