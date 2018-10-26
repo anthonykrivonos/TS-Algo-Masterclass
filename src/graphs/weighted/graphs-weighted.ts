@@ -8,6 +8,7 @@
 import { MCArray } from "../../arrays/main/arrays-main";
 import { MCMap } from "../../maps/main/maps-main";
 import { MCQueue } from "../../queues/main/queues-main";
+import { MCPriorityQueue } from "../../queues/priority/queues-priority";
 
 /**
 * Masterclass weighted graph implementation.
@@ -76,6 +77,18 @@ export class MCWeightedGraph<T> {
                   }
             }
             return null;
+      }
+
+      /**
+      * Has Edge
+      * O(n)
+      * - Returns true if there is an edge between two vertices.
+      * @param from The vertex the edge starts from.
+      * @param to The vertex the edge ends at.
+      * @returns True if an edge exists between the two vertices, else false.
+      */
+      public hasEdge(from:T, to:T):boolean {
+            return this.getEdge(from, to) != null;
       }
 
       /**
@@ -328,50 +341,125 @@ export class MCWeightedGraph<T> {
       * - 2. Grow the tree by one edge: of the edges that connect the tree to vertices not yet in the tree, find the minimum-weight edge, and transfer it to the tree. Repeat until all vertices are in the tree.
       * @returns The minimum spanning tree for the MCGraph.
       */
-      // public getPrimTree():MCWeightedGraph<T> {
-      // 
-      //       // Create a new graph (minimum spanning tree) with the given vertices, but no edges: O(n)
-      //       var minSpanTree = new MCWeightedGraph<T>();
-      //
-      //       // List of required vertices
-      //       let necVertices:MCArray<T> = this.adjacencyWeightedMap.keys();
-      //
-      //       // Create a set of the graph's edges: O(n^2)
-      //       var edgeSet = this.adjacencyWeightedMap.values().flattened()!;
-      //
-      //       // If edges and vertices exist
-      //       if (edgeSet.length > 0 && necVertices.length > 0) {
-      //
-      //             // Sort the edges by weight
-      //             edgeSet.sort((edgeA, edgeB) => edgeA.weight - edgeB.weight);
-      //
-      //             // Get the minimum edge in the set
-      //             var minEdge = edgeSet.shift()!;
-      //             minSpanTree.addEdge(minEdge.to, minEdge.from, minEdge.weight);
-      //
-      //             var vertex = minEdge.to;
-      //             necVertices.splice(necVertices.indexOf(vertex), 1);
-      //             vertex = minEdge.from;
-      //             necVertices.splice(necVertices.indexOf(vertex), 1);
-      //
-      //             while (!necVertices.isEmpty()) {
-      //
-      //                   vertex = necVertices.shift()!;
-      //
-      //                   minSpanTree.addVertex(vertex);
-      //
-      //                   var adjacencyList = this.adjacencyWeightedMap.get(vertex)!;
-      //                   if (adjacencyList.length > 0) {
-      //                         adjacencyList.sort((edgeA, edgeB) => edgeA.weight - edgeB.weight);
-      //                         minEdge = adjacencyList.shift();
-      //
-      //                   }
-      //             }
-      //       }
-      //
-      //       // Return the generated minimum spanning tree
-      //       return minSpanTree;
-      // }
+      public getPrimTree():MCWeightedGraph<T> {
+
+            // Create a new graph (minimum spanning tree) with the given vertices, but no edges: O(n)
+            var minSpanTree = new MCWeightedGraph<T>();
+
+            // List of required vertices
+            let vertexQueue = new MCQueue<T>();
+
+            // Create a set of the graph's edges: O(n^2)
+            var edgeSet = this.adjacencyWeightedMap.values().flattened()!;
+
+            // If edges and vertices exist
+            if (edgeSet.length > 0) {
+
+                  // Sort the edges by weight
+                  edgeSet.sort((edgeA, edgeB) => edgeA.weight - edgeB.weight);
+
+                  // Get the minimum edge in the set
+                  var minEdge = edgeSet.shift()!;
+
+                  // Add the vertices connected by the minimum edge to the graph
+                  var vertex = minEdge.to;
+                  vertexQueue.add(vertex);
+                  minSpanTree.addVertex(vertex);
+
+                  let keysNeeded = this.adjacencyWeightedMap.keys().length;
+
+                  while (vertexQueue.size() < keysNeeded) {
+
+                        // Get the vertex from the bottom of the queue
+                        vertex = vertexQueue.peek();
+
+                        // Get the vertex's adjacency list
+                        let adjacencyList = this.adjacencyWeightedMap.get(vertex)! as MCArray<MCWeightedEdge<T>>;
+
+                        // Sort list by edge weight
+                        adjacencyList.mergeSort();
+
+                        for (var i = 0; i < adjacencyList.length; i++) {
+                              if (!minSpanTree.adjacencyWeightedMap.has(adjacencyList[i].to)) {
+                                    vertexQueue.add(adjacencyList[i].to);
+                                    minSpanTree.addVertex(adjacencyList[i].to);
+                                    minSpanTree.addUndirectedEdge(adjacencyList[i].from, adjacencyList[i].to, adjacencyList[i].weight);
+                              }
+                        }
+
+                  }
+
+            }
+
+            // Return the generated minimum spanning tree
+            return minSpanTree;
+      }
+
+      /**
+      * Djikstra
+      * - O(|E| + |V|log|V|)
+      * - Finds the shortest path between two vectors using Djikstra's algorithm.
+      * @returns The minimum weight to get from the `from` vertex to the `to` vertex.
+      */
+      public djikstra(from:T, to:T) {
+
+            // Key that tracks the vertex
+            let VERTEX_KEY = 0;
+            // Key that tracks the distance of each vertex as a weight
+            let WEIGHT_KEY = 1;
+
+            // "Infinity" value indicating that this path was not examined yet
+            let INFINITY = Number.MAX_VALUE;
+
+            // Priority queue storing the distances from `from` to every other vertex
+            var weightQueue = new MCPriorityQueue<MCArray<any>>((a:MCArray<any>, b:MCArray<any>) => a[WEIGHT_KEY] - b[WEIGHT_KEY]);
+
+            // Store vertices in an array
+            let vertices = this.adjacencyWeightedMap.keys();
+
+            // Function to add element from the queue
+            let addToQueue = (vertex:T, weight:number) => {
+                  weightQueue.add(new MCArray<any>(vertex, weight));
+            };
+
+            // Array of map of distances
+            var distanceMap = new Map<T, number>();
+            vertices.forEach((vertex) => {
+                  if (vertex === from) {
+                        // Add `from` to the queue with a distance of 0 to itself
+                        distanceMap.set(from, 0);
+                        addToQueue(from, 0);
+                  } else {
+                        distanceMap.set(vertex, INFINITY);
+                  }
+            });
+
+            // Loop through vertices until all have been accounted for
+            while (!weightQueue.isEmpty()) {
+
+                  // Extract the smallest weight vector from the priority queue
+                  let currentVertex = weightQueue.poll()![VERTEX_KEY];
+
+                  // Iterate through adjacent vertices
+                  this.adjacencyWeightedMap.get(currentVertex)!.forEach((edge:MCWeightedEdge<T>) => {
+                        let adjacentVertex = edge.to;
+                        if (adjacentVertex != from) {
+                              let adjacentWeight = edge.weight;
+
+                              // Check if the shortest path is produced from adjacentVertex through currentVertex
+                              if (distanceMap.get(adjacentVertex)! > distanceMap.get(currentVertex)! + adjacentWeight) {
+                                    // Update adjacentVertex's distance
+                                    let newDistance = distanceMap.get(currentVertex)! + adjacentWeight;
+                                    distanceMap.set(adjacentVertex, newDistance);
+                                    addToQueue(adjacentVertex, newDistance);
+                              }
+                        }
+                  });
+
+            }
+
+            return distanceMap.get(to);
+      }
 
       /**
       * To String

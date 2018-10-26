@@ -30,7 +30,7 @@ export class MCPriorityQueue<T> extends MCQueue<T> {
       }
 
       /**
-       * Push
+       * Add
        * TODO: - Test
        * - O(n)
        * - Adds an element to the top proper position in the queue.

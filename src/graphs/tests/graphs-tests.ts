@@ -113,3 +113,10 @@ Utility.analyze(MCWeightedGraph.prototype.isCyclicUF, weightedGraph);
 
 // Test Kruskal's Minimum Spanning Tree
 Utility.analyze(MCWeightedGraph.prototype.getKruskalTree, weightedGraph);
+
+// Test Dijkstra's Shortest Path
+Utility.analyze(MCWeightedGraph.prototype.djikstra, weightedGraph, 1, 5);
+
+//
+// // Test Prim's Minimum Spanning Tree
+// Utility.analyze(MCWeightedGraph.prototype.getPrimTree, weightedGraph);
