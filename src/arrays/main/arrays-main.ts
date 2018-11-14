@@ -372,6 +372,39 @@ export class MCArray<T> extends Array<T> {
             return this;
       }
 
+      public quickSort(left:number, right:number):MCArray<T> {
+
+            let partition = (first:number, last:number) => {
+                  // Set pivot to the last index
+                  var pivot = this[last];
+
+                  // Index of the smallest element
+                  var i = first - 1;
+
+                  for (var j = first; j < last; j++) {
+                        // If the current element is smaller than or equal to the pivot
+                        if (this[j] <= pivot) {
+                              i++;
+                              this.swap(i, j);
+                        }
+                  }
+                  this.swap(i + 1, last);
+                  return i + 1;
+            };
+
+            if (left < right) {
+
+                  // Get index of partition
+                  let partitionIndex = partition(left, right)
+
+                  this.quickSort(left, partitionIndex - 1)
+                  this.quickSort(partitionIndex, right)
+
+            }
+
+            return this;
+      }
+
       /**
        * Bogo Sort
        * - O((n + 1)!)

@@ -39,6 +39,9 @@ Utility.analyze(MCArray.prototype.mergeSort, arrToSort.copy());
 Utility.analyze(MCArray.prototype.bogoSort, new MCArray(2, 5, 1, 9, 5, 6, 1, 9, 8, 4, 2));
 Utility.analyze(MCArray.prototype.bogoSortFallback, new MCArray(2, 5, 1, 9, 5, 6, 1, 9, 8, 4, 2));
 
+// Test Quicksort
+Utility.analyze(MCArray.prototype.quickSort, arrToSort.copy());
+
 // Test Linear Search for 3
 Utility.analyze(MCArray.prototype.linearSearch, arrToSort.copy(), 3);
 Utility.analyze(MCArray.prototype.linearSearchRecursive, arrToSort.copy(), 3);
