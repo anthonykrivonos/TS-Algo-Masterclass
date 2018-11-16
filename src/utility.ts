@@ -41,9 +41,14 @@ ${timeIndicator} ${functionName} called${forObject != null ? ` on ❮ ${objectVa
   ⏳ Took ${durationS}s`);
 };
 
-//
-// Private Functions
-//
+/**
+ * Print
+ * - O(1)
+ * - Prints a debug message.
+ */
+export function print(message:string):void {
+      console.log(`${new Date().toLocaleTimeString()}: ${message}`);
+}
 
 /**
  * Factorial

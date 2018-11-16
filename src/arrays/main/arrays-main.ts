@@ -372,34 +372,44 @@ export class MCArray<T> extends Array<T> {
             return this;
       }
 
-      public quickSort(left:number, right:number):MCArray<T> {
+      /**
+       * Quick Sort
+       * - O(nlog(n))
+       * - Partitions the array into subhalves and divides the left and right portions of each subhalf into elements smaller and larger than the given pivot element, respectively.
+       * @return The sorted MCArray.
+       */
+      public quickSort(left:number = 0, right:number = -1):MCArray<T> {
+            // Set right if unset
+            if (right === -1) { right = this.length - 1; }
 
-            let partition = (first:number, last:number) => {
-                  // Set pivot to the last index
-                  var pivot = this[last];
+            let partition = (l:number, r:number) => {
+                  // Set pivot
+                  let pivot = this[l];
 
-                  // Index of the smallest element
-                  var i = first - 1;
+                  // Instantiate iteration indices
+                  var i = l;
+                  var j = r;
 
-                  for (var j = first; j < last; j++) {
-                        // If the current element is smaller than or equal to the pivot
-                        if (this[j] <= pivot) {
+                  while (true) {
+                        while (this[i] < pivot) {
                               i++;
-                              this.swap(i, j);
                         }
+                        while (this[j] > pivot) {
+                              j--;
+                        }
+                        if (i >= j) {
+                              return j;
+                        }
+                        this.swap(i, j);
                   }
-                  this.swap(i + 1, last);
-                  return i + 1;
+
+                  return i;
             };
 
             if (left < right) {
-
-                  // Get index of partition
-                  let partitionIndex = partition(left, right)
-
-                  this.quickSort(left, partitionIndex - 1)
-                  this.quickSort(partitionIndex, right)
-
+                  var partitionIndex = partition(left, right);
+                  this.quickSort(left, partitionIndex);
+                  this.quickSort(partitionIndex + 1, right);
             }
 
             return this;

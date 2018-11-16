@@ -17,7 +17,7 @@ let arrayUnionA = new MCArray(1, 3, 8, 5, 7);
 let arrayUnionB = new MCArray(8, 6, 5, 4, 2, 1, 0);
 
 // Call Tests
-console.log(`🔎 Calling MCArray Tests`);
+Utility.print(`🔎 Calling MCArray Tests`);
 
 // Test Bubble Sort
 Utility.analyze(MCArray.prototype.bubbleSort, arrToSort.copy());
