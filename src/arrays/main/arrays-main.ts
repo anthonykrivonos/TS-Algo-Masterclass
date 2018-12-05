@@ -402,8 +402,6 @@ export class MCArray<T> extends Array<T> {
                         }
                         this.swap(i, j);
                   }
-
-                  return i;
             };
 
             if (left < right) {

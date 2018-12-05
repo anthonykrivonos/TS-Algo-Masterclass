@@ -20,8 +20,26 @@ export class MCGrid<T> {
        * - Creates an MCArray from a regular array.
        * @param items Variadic array elements.
        */
-      constructor(rows:MCArray<MCArray<T>>) {
-            this.grid = rows;
+      constructor(rows?:MCArray<MCArray<T>>) {
+            if (rows) {
+                  this.grid = rows!;
+            } else {
+                  this.grid = new MCArray<MCArray<T>>()
+            }
+      }
+
+      /**
+       * Copy
+       * - Copies the MCGrid and returns its replica.
+       * @returns The new MCGrid.
+       */
+      public copy():MCGrid<T> {
+            let newGrid = new MCArray<MCArray<T>>();
+            this.grid.forEach((row) => {
+                  newGrid.push(row.copy());
+            });
+            let newMCGrid = new MCGrid<T>(newGrid);
+            return newMCGrid;
       }
 
       /**
@@ -33,6 +51,24 @@ export class MCGrid<T> {
        */
       public get(row:number, col:number):T {
             return this.grid[row][col];
+      }
+
+      /**
+       * Get Row Length
+       * - Gets the number of rows in the grid.
+       * @returns The number of rows in the grid.
+       */
+      public getRowLength():number {
+            return this.grid.length;
+      }
+
+      /**
+       * Get
+       * - Gets the number of columns in the grid.
+       * @returns The number of columns in the grid.
+       */
+      public getColumnLength():number {
+            return this.grid.length > 0 ? this.grid[0].length : 0;
       }
 
       /**
@@ -137,6 +173,42 @@ export class MCGrid<T> {
                   this.floodFill(withElement, atRow, atCol - 1);
                   this.floodFill(withElement, atRow, atCol + 1);
             }
+      }
+
+      /**
+       * Warshall Reachability
+       * - O(n^3)
+       * @param withElement The element to fill with.
+       * @param atRow The row to start from.
+       * @param atCol The column to start from.
+       */
+      public static warshallReachability(adjMatrix:MCGrid<number>):MCGrid<number> {
+            var tempMatrix = adjMatrix.copy();
+            for (var c = 0; c < tempMatrix.getColumnLength(); c++) {
+                  for (var r = 0; r < tempMatrix.getRowLength(); r++) {
+                        if (r != c && tempMatrix.get(r, c)  === 1) {
+                              for (var c1 = 0; c1 < tempMatrix.getColumnLength(); c1++) {
+                                    if (tempMatrix.get(c, c1) === 1) {
+                                          tempMatrix.set(1, r, c1);
+                                    }
+                              }
+                        }
+                  }
+            }
+            return tempMatrix;
+      }
+
+      public toString():string {
+            var str = "\n";
+            for (var r = 0; r < this.getRowLength(); r++) {
+                  str += "["
+                  for (var c = 0; c < this.grid[r].length; c++) {
+                        str += ` ${this.get(r, c)} `
+                  }
+                  str += "]\n";
+            }
+            str.replace(/\n$/, '');
+            return str;
       }
 
       // https://www.geeksforgeeks.org/a-search-algorithm/
