@@ -349,7 +349,7 @@ export class MCWeightedGraph<T> {
             // List of required vertices
             let vertexQueue = new MCQueue<T>();
 
-            // Create a set of the graph's edges: O(n^2)
+            // Create a set of the graph's edges
             var edgeSet = this.adjacencyWeightedMap.values().flattened()!;
 
             // If edges and vertices exist
