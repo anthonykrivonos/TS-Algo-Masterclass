@@ -42,6 +42,9 @@ Utility.analyze(MCArray.prototype.bogoSortFallback, new MCArray(2, 5, 1, 9, 5, 6
 // Test Quicksort
 Utility.analyze(MCArray.prototype.quickSort, arrToSort.copy());
 
+// Test Bucket Sort
+Utility.analyze(MCArray.prototype.bucketSort, arrToSort.copy());
+
 // Test Linear Search for 3
 Utility.analyze(MCArray.prototype.linearSearch, arrToSort.copy(), 3);
 Utility.analyze(MCArray.prototype.linearSearchRecursive, arrToSort.copy(), 3);

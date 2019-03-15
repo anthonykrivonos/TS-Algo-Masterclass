@@ -6,6 +6,7 @@
  */
 
 import * as Utility from "../../utility";
+import { MCHeap, MCHeapType } from "../../heaps/main/heaps-main";
 
 /**
  * Masterclass extension of the Array.
@@ -30,6 +31,41 @@ export class MCArray<T> extends Array<T> {
       public copy():MCArray<T> {
             let mcArray:MCArray<any> = this.slice() as MCArray<T>;
             return mcArray;
+      }
+
+      /**
+       * Set
+       * - Sets the value of the MCArray to a new MCArray.
+       */
+      public set(array:MCArray<T>):void {
+            for (let i = 0; i < array.length; i++) {
+                  const value = array[i];
+                  if (i < this.length) {
+                        this[i] = value;
+                  } else {
+                        this.push(value);
+                  }
+            }
+      }
+
+      /**
+       * Clear
+       * - Clears all contents of the MCArray.
+       */
+      public clear():void {
+            this.splice(0, this.length);
+      }
+
+      /**
+       * Filled
+       * - Fills the array with a certain number of the same value.
+       * @returns The MCArray.
+       */
+      public filled(withValue:T, length:number):MCArray<T> {
+            for (let i = 0; i < length; i++) {
+                  this.push(withValue);
+            }
+            return this
       }
 
       /**
@@ -151,7 +187,44 @@ export class MCArray<T> extends Array<T> {
        * - Join the sorted buckets.
        * @return The sorted MCArray.
        */
-      public bucketSort():MCArray<T> {
+      public bucketSort(bucketCount:number | null = null):MCArray<T> {
+            // Return array if empty
+            if (this.isEmpty()) {
+                  return this
+            }
+
+            // Create an array of buckets
+            bucketCount = bucketCount != null ? bucketCount : Math.floor(this.length/3)
+            const buckets:MCArray<MCArray<T>> = new MCArray<MCArray<T>>().filled(new MCArray<T>(), bucketCount);
+
+            // Store maximum key in array
+            const maximumKey = this.reduce((max:number, value:T) => {
+                  const hashCode = value.hashCode()
+                  if (hashCode > max) {
+                        return hashCode
+                  }
+                  return max
+            }, 0)
+
+            // Fill buckets with array's values
+            this.forEach((value:T) => buckets[Math.floor(value.hashCode() / maximumKey * bucketCount!)].push(value))
+
+            // Quicksort each bucket
+            for (let i = 0; i < bucketCount; i++) {
+                  buckets[i].quickSort();
+            }
+
+            // Merge all buckets using a min heap
+            let newArray = new MCArray<T>();
+            const minHeap = new MCHeap<T>(MCHeapType.min);
+            for (let i = 0; i < bucketCount; i++) {
+                  for (let j = 0; j < buckets[i].length; j++) {
+                        minHeap.insert(buckets[i][j]);
+                        newArray.push(minHeap.behead());
+                  }
+            }
+
+            this.set(newArray);
 
             return this;
       }
@@ -201,7 +274,7 @@ export class MCArray<T> extends Array<T> {
        * @param sortLimit The upper limit for sorting. Default = null sorts the whole list.
        * @return The sorted MCArray.
        */
-      public bubbleSortRecursive(sortLimit:number | null = null):MCArray<T>{
+      public bubbleSortRecursive(sortLimit:number | null = null):MCArray<T> {
 
             sortLimit = sortLimit == null ? this.length : sortLimit;
             if (sortLimit < 1) return this;
