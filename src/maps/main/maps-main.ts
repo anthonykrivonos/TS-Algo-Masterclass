@@ -61,7 +61,7 @@ export class MCMap<KeyType, ValueType> {
        * @returns A hashed integer.
        */
       private hash(key:KeyType):number {
-            return key.hashCode() % this.bucketCount;
+            return (key as any as string).hashCode() % this.bucketCount;
       }
 
       /**

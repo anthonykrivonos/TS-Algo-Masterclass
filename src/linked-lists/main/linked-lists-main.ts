@@ -106,8 +106,10 @@ export class MCLinkedList<T> {
             if (this.head) {
                   if (index === 0) {
                         let oldHead = this.head;
-                        let newHead = this.head.getNext()!;
-                        this.head = newHead;
+                        let newHead = this.head.getNext();
+                        if (newHead) {
+                              this.head = newHead;
+                        }
                         return oldHead;
                   } else if (index < this.size() - 1) {
                         var i = 0;

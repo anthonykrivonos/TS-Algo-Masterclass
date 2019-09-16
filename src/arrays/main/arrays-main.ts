@@ -199,7 +199,7 @@ export class MCArray<T> extends Array<T> {
 
             // Store maximum key in array
             const maximumKey = this.reduce((max:number, value:T) => {
-                  const hashCode = value.hashCode()
+                  const hashCode = (value as any as string).hashCode()
                   if (hashCode > max) {
                         return hashCode
                   }
@@ -207,7 +207,7 @@ export class MCArray<T> extends Array<T> {
             }, 0)
 
             // Fill buckets with array's values
-            this.forEach((value:T) => buckets[Math.floor(value.hashCode() / maximumKey * bucketCount!)].push(value))
+            this.forEach((value:T) => buckets[Math.floor((value as any as string).hashCode() / maximumKey * bucketCount!)].push(value))
 
             // Quicksort each bucket
             for (let i = 0; i < bucketCount; i++) {
