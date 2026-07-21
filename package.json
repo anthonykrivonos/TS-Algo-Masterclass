@@ -12,7 +12,7 @@
       "author": "Anthony Krivonos",
       "license": "MIT",
       "dependencies": {
-            "nodemon": "^1.18.4",
+            "nodemon": "^3.1.14",
             "typescript": "^3.0.3"
       }
 }
